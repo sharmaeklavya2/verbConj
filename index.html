@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark light" />
+<title>Verb Conjugator</title>
+<!--
+<link rel="stylesheet" href="https://sharmaeklavya2.github.io/funcToForm/funcToForm.css" />
+<script type="text/javascript" src="https://sharmaeklavya2.github.io/funcToForm/funcToForm.js"></script>
+-->
+<script type="module" src="verbConj.js"></script>
+<link rel="stylesheet" href="http://localhost:8080/websites/funcToForm/funcToForm.css" />
+<script type="text/javascript" src="http://localhost:8080/websites/funcToForm/funcToForm.js"></script>
+<script>
+'use strict';
+let verbConj = null;
+let dcLoaded = false;
+
+function arraysEqual(a, b) {
+    if (a === b) {return true;}
+    if (a == null || b == null) {return false;}
+    if (a.length !== b.length) {return false;}
+    for (let i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) {return false;}
+    }
+    return true;
+}
+function hashStr(s) {
+    return s;
+}
+
+const langCodeToLangName = {'en': 'English'};
+const tenseTimeCodeToTenseTimeName = {'Pr': 'present', 'Past': 'past', 'Fu': 'future'};
+const tenseTypeCodeToTenseTypeName = {'s': 'simple', 'c': 'continuous', 'p': 'perfect'};
+const pronounCodeToDescr = {
+    '1sm': 'I (male/neuter)',
+    '1sf': 'I (female)',
+    '1pm': 'We',
+    '2sm': 'You (singular, male/neuter)',
+    '2sf': 'You (singular, female)',
+    '2pm': 'You (plural, male/neuter)',
+    '2pf': 'You (plural, female)',
+    '3sm': 'He',
+    '3sf': 'She',
+    '3sn': 'It',
+    '3pm': 'They (male/mixed)',
+    '3pf': 'They (female)',
+    '3pn': 'They (neuter)',
+};
+const tenseCodeToDescr = {
+    'sPr': 'simple present',
+    'sPast': 'simple past',
+    'sFu': 'simple future',
+    'cPr': 'present continuous',
+    'cPast': 'past continuous',
+    'cFu': 'future continuous',
+    'pPr': 'present perfect',
+    'pPast': 'past perfect',
+    'pFu': 'future perfect',
+};
+const verbCodeToDescr = {
+    'be': 'be',
+    'have': 'have',
+    'do': 'do',
+    'see': 'see',
+};
+
+function getOptions(codeToDescr) {
+    const options = [], keys = [];
+    for(const [x, y] of Object.entries(codeToDescr)) {
+        options.push(new SelectOption(x, [x], y));
+        keys.push(x);
+    }
+    options.push(new SelectOption('all', keys, '(all)'));
+    return options;
+}
+
+const pronounOptions = getOptions(pronounCodeToDescr);
+const verbOptions = getOptions(verbCodeToDescr);
+const tenseOptions = getOptions(tenseCodeToDescr);
+const paramS = new Param('subject', new SelectWidget(pronounOptions, '1sm'));
+const paramV = new Param('verb', new SelectWidget(verbOptions, 'see'));
+const paramT = new Param('tense', new SelectWidget(tenseOptions, 'sPr'));
+const paramGroup = new ParamGroup('myForm', [paramS, paramV, paramT]);
+
+function printSentences(input, stdout) {
+    const subjects = input.subject;
+    const verbs = input.verb;
+    const tenses = input.tense;
+    const langs = ['en'];
+    const langNames = langs.map((x) => langCodeToLangName[x]);
+    stdout.tableRow(langNames, true);
+    for(const subject of subjects) {
+        const subjectInfo = {'type': subject[0], 'number': subject[1], 'gender': subject[2]};
+        for(const verb of verbs) {
+            for(const tense of tenses) {
+                const tenseInfo = {
+                    'type': tenseTypeCodeToTenseTypeName[tense[0]],
+                    'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
+                };
+                const row = [];
+                for(const lang of langs) {
+                    const response = verbConj.verbConj(subjectInfo, verb, tenseInfo, lang);
+                    if(response.status === 'ok') {
+                        row.push(response.text);
+                    }
+                    else {
+                        row.push(response.status + ': ' + response.msg);
+                    }
+                }
+                stdout.tableRow(row);
+            }
+        }
+    }
+}
+import('./verbConj.js').then((m) => {
+    verbConj = m;
+    if(dcLoaded) {
+        createForm('myApp', paramGroup, printSentences);
+    }
+});
+window.addEventListener('DOMContentLoaded', function() {
+    dcLoaded = true;
+    if(verbConj !== null) {
+        createForm('myApp', paramGroup, printSentences);
+    }
+});
+</script>
+</head>
+
+<body>
+<h1>Verb Conjugator</h1>
+<div id="myApp"></div>
+</body>
+</html>
