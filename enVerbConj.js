@@ -67,6 +67,8 @@ export const augmentations = {
     'do': ['does', 'doing', 'did', 'done'],
     'see': ['sees', 'seeing', 'saw', 'seen'],
     'write': ['writes', 'writing', 'wrote', 'written'],
+    'go': ['goes', 'going', 'went', 'gone'],
+    'eat': ['eats', 'eating', 'ate', 'eaten'],
 };
 
 function wordsToSentence(words) {
