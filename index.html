@@ -100,7 +100,7 @@ function printSentences(input, stdout) {
     const objects = input.object;
     const verbs = input.verb;
     const tenses = input.tense;
-    const langs = ['en'];
+    const langs = ['en', 'hi'];
     const langNames = langs.map((x) => langCodeToLangName[x]);
     stdout.tableRow(langNames, true);
     for(const subject of subjects) {
