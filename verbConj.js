@@ -1,6 +1,6 @@
 import { verbConj as enVerbConj } from "./enVerbConj.js";
 
-export function verbConj(subject, verb, tense, lang) {
+export function verbConj(subject, object, verb, tense, lang) {
     if(lang === 'en') {
         return enVerbConj(subject, verb, tense);
     }

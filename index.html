@@ -10,6 +10,7 @@
 <script type="text/javascript" src="https://sharmaeklavya2.github.io/funcToForm/funcToForm.js"></script>
 -->
 <script type="module" src="verbConj.js"></script>
+<script type="module" src="enVerbConj.js"></script>
 <link rel="stylesheet" href="http://localhost:8080/websites/funcToForm/funcToForm.css" />
 <script type="text/javascript" src="http://localhost:8080/websites/funcToForm/funcToForm.js"></script>
 <script>
@@ -30,7 +31,7 @@ function hashStr(s) {
     return s;
 }
 
-const langCodeToLangName = {'en': 'English'};
+const langCodeToLangName = {'en': 'English', 'hi': 'Hindi', 'kn': 'Kannada'};
 const tenseTimeCodeToTenseTimeName = {'Pr': 'present', 'Past': 'past', 'Fu': 'future'};
 const tenseTypeCodeToTenseTypeName = {'s': 'simple', 'c': 'continuous', 'p': 'perfect'};
 const pronounCodeToDescr = {
@@ -47,6 +48,12 @@ const pronounCodeToDescr = {
     '3pm': 'They (male/mixed)',
     '3pf': 'They (female)',
     '3pn': 'They (neuter)',
+};
+const objectCodeToDescr = {
+    'sm': 'singular male/neuter',
+    'sf': 'singular female',
+    'pm': 'plural male/neuter/mixed',
+    'pf': 'plural female',
 };
 const tenseCodeToDescr = {
     'sPr': 'simple present',
@@ -77,15 +84,18 @@ function getOptions(codeToDescr) {
 }
 
 const pronounOptions = getOptions(pronounCodeToDescr);
+const objectOptions = getOptions(objectCodeToDescr);
 const verbOptions = getOptions(verbCodeToDescr);
 const tenseOptions = getOptions(tenseCodeToDescr);
 const paramS = new Param('subject', new SelectWidget(pronounOptions, '1sm'));
+const paramO = new Param('object', new SelectWidget(objectOptions, 'sm'));
 const paramV = new Param('verb', new SelectWidget(verbOptions, 'see'));
 const paramT = new Param('tense', new SelectWidget(tenseOptions, 'sPr'));
-const paramGroup = new ParamGroup('myForm', [paramS, paramV, paramT]);
+const paramGroup = new ParamGroup('myForm', [paramS, paramO, paramV, paramT]);
 
 function printSentences(input, stdout) {
     const subjects = input.subject;
+    const objects = input.object;
     const verbs = input.verb;
     const tenses = input.tense;
     const langs = ['en'];
@@ -93,23 +103,26 @@ function printSentences(input, stdout) {
     stdout.tableRow(langNames, true);
     for(const subject of subjects) {
         const subjectInfo = {'type': subject[0], 'number': subject[1], 'gender': subject[2]};
-        for(const verb of verbs) {
-            for(const tense of tenses) {
-                const tenseInfo = {
-                    'type': tenseTypeCodeToTenseTypeName[tense[0]],
-                    'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
-                };
-                const row = [];
-                for(const lang of langs) {
-                    const response = verbConj.verbConj(subjectInfo, verb, tenseInfo, lang);
-                    if(response.status === 'ok') {
-                        row.push(response.text);
+        for(const object of objects) {
+            const objectInfo = {'number': object[0], 'gender': object[1]};
+            for(const verb of verbs) {
+                for(const tense of tenses) {
+                    const tenseInfo = {
+                        'type': tenseTypeCodeToTenseTypeName[tense[0]],
+                        'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
+                    };
+                    const row = [];
+                    for(const lang of langs) {
+                        const response = verbConj.verbConj(subjectInfo, objectInfo, verb, tenseInfo, lang);
+                        if(response.status === 'ok' || response.status === 'warn') {
+                            row.push(response.text);
+                        }
+                        else {
+                            row.push(response.status + ': ' + response.msg);
+                        }
                     }
-                    else {
-                        row.push(response.status + ': ' + response.msg);
-                    }
+                    stdout.tableRow(row);
                 }
-                stdout.tableRow(row);
             }
         }
     }
