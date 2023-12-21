@@ -66,14 +66,20 @@ const tenseCodeToDescr = {
     'pPast': 'past perfect',
     'pFu': 'future perfect',
 };
+const verbs = [
+    'be', 'have', 'ask', 'bring', 'call', 'come', 'do', 'drink', 'eat', 'feel',
+    'give', 'go', 'hear', 'keep', 'laugh', 'learn', 'see', 'sleep', 'take',
+    'tell', 'walk', 'write',
+];
 const verbCodeToDescr = {
-    'be': 'be',
-    'have': 'have',
-    'do': 'do',
-    'see': 'see',
-    'go': 'go',
-    'eat': 'eat',
+    'putOn': 'put (on)',
+    'putIn': 'put (in)',
 };
+for(const verb of verbs) {
+    if(verbCodeToDescr[verb] === undefined) {
+        verbCodeToDescr[verb] = verb;
+    }
+}
 
 function getOptions(codeToDescr) {
     const options = [], keys = [];
