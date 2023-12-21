@@ -115,7 +115,7 @@ function trnByObject(word, object, useFp=false) {
             object.number = 's';
         }
     }
-    const yaa = matras.ya + matras.aa;
+    const yaa = chars.ya + matras.aa;
     const iyaa = matras.i + yaa;
     if(object.gender === 'm') {
         if(object.number === 's') {
@@ -219,8 +219,8 @@ export function verbConj(subject, object, verb, tense) {
         response.status = 'warn';
         response.msg = "subject.gender changed from n to m.";
     }
-    // object = Object.assign({}, object);
-    // object.type = '3';
+    object = Object.assign({}, object);
+    object.type = '3';
     const words = [];
     const verbInfo = verbInfos[verb];
     if(verbInfo === undefined) {
@@ -254,9 +254,7 @@ export function verbConj(subject, object, verb, tense) {
             beConjSimple(subject, 'present', words);
         }
         else if(tense.time === 'past') {
-            response.status = 'unimpl';
-            response.msg = `simple past tense is unimplemented.`;
-            return response;
+            words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), true));
         }
         else if(tense.time === 'future') {
             response.status = 'unimpl';
@@ -271,9 +269,8 @@ export function verbConj(subject, object, verb, tense) {
         beConjSimple(subject, tense.time, words);
     }
     else if(tense.type === 'perfect') {
-        response.status = 'unimpl';
-        response.msg = `tense type '${tense.type}' is unimplemented.`;
-        return response;
+        words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), false));
+        beConjSimple((isTr ? object : subject), tense.time, words);
     }
     else {
         response.status = 'unimpl';
