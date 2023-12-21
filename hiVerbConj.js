@@ -83,6 +83,8 @@ export const verbInfos = {
     'keep': {'tr': true, 'cont': 'रख', 'past': 'रखा'},
     'laugh': {'tr': false, 'cont': 'हँस', 'past': 'हँसा'},
     'learn': {'tr': true, 'cont': 'सीख', 'past': 'सीखा'},
+    'putOn': {'tr': true, 'cont': 'रख', 'past': 'रखा'},
+    'putIn': {'tr': true, 'cont': 'डाल', 'past': 'डाला'},
     'see': {'tr': true, 'cont': 'देख', 'past': 'देखा'},
     'sleep': {'tr': false, 'cont': 'सो', 'past': 'सोया'},
     'take': {'tr': true, 'cont': 'ले', 'past': 'लिया'},
@@ -275,19 +277,15 @@ export function verbConj(subject, object, verb, tense) {
             words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), true));
         }
         else if(tense.time === 'future') {
-            const unremovableMatras = [matras.aa, matras.ee, matras.uu, matras.o];
             const lastChar = verbInfo.cont[verbInfo.cont.length-1];
             if(lastChar === matras.e) {
                 words.push(verbInfo.cont.slice(0, -1) + getFutureSuffix(subject, true));
             }
-            else if(isConsonant(verbInfo.cont)) {
+            else if(isConsonant(lastChar)) {
                 words.push(verbInfo.cont + getFutureSuffix(subject, true));
             }
-            else if(unremovableMatras.includes(lastChar)) {
-                words.push(verbInfo.cont + getFutureSuffix(subject, false));
-            }
             else {
-                throw new Error(`word with unsupported ending: ${word}`);
+                words.push(verbInfo.cont + getFutureSuffix(subject, false));
             }
         }
     }
