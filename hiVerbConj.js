@@ -67,15 +67,27 @@ export function isConsonant(ch) {
 
 export const verbInfos = {
     // 'tr': is transitive
-    'be': {'tr': false},
+    'be': {'tr': false, 'cont': 'हो', 'past': 'हुआ'},
     'have': null,
-    'come': {'tr': true, 'cont': 'आ', 'past': 'आया'},
+    'ask': {'tr': true, 'cont': 'पूछ', 'past': 'पूछा'},
+    'bring': {'tr': true, 'cont': 'ला', 'past': 'लाया'},
+    'call': {'tr': true, 'cont': 'बुला', 'past': 'बुलाया'},
+    'come': {'tr': false, 'cont': 'आ', 'past': 'आया'},
     'do': {'tr': true, 'cont': 'कर', 'past': 'किया'},
+    'drink': {'tr': true, 'cont': 'पी', 'past': 'पिया'},
     'eat': {'tr': true, 'cont': 'खा', 'past': 'खाया'},
+    'feel': {'tr': true, 'cont': 'लग', 'past': 'लगा'},
+    'give': {'tr': true, 'cont': 'दे', 'past': 'दिया'},
     'go': {'tr': false, 'cont': 'जा', 'past': 'गया'},
+    'hear': {'tr': true, 'cont': 'सुन', 'past': 'सुना'},
+    'keep': {'tr': true, 'cont': 'रख', 'past': 'रखा'},
+    'laugh': {'tr': false, 'cont': 'हँस', 'past': 'हँसा'},
+    'learn': {'tr': true, 'cont': 'सीख', 'past': 'सीखा'},
     'see': {'tr': true, 'cont': 'देख', 'past': 'देखा'},
     'sleep': {'tr': false, 'cont': 'सो', 'past': 'सोया'},
+    'take': {'tr': true, 'cont': 'ले', 'past': 'लिया'},
     'tell': {'tr': true, 'cont': 'बता', 'past': 'बताया'},
+    'walk': {'tr': false, 'cont': 'चल', 'past': 'चला'},
     'write': {'tr': true, 'cont': 'लिख', 'past': 'लिखा'},
 };
 
