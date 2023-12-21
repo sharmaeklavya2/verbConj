@@ -280,7 +280,10 @@ export function verbConj(subject, object, verb, tense) {
             if(lastChar === matras.e) {
                 words.push(verbInfo.cont.slice(0, -1) + getFutureSuffix(subject, true));
             }
-            if(isConsonant(verbInfo.cont) || unremovableMatras.includes(lastChar)) {
+            else if(isConsonant(verbInfo.cont)) {
+                words.push(verbInfo.cont + getFutureSuffix(subject, true));
+            }
+            else if(unremovableMatras.includes(lastChar)) {
                 words.push(verbInfo.cont + getFutureSuffix(subject, false));
             }
             else {
