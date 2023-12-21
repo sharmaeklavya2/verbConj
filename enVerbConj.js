@@ -61,29 +61,31 @@ function haveConjSimple(pronoun, tenseTime, words) {
 }
 
 export const augmentations = {
-    // 0: conj for his, 1: continuous, 2: past, 3: past participle
-    'be': ['is', 'being', 'was', 'been'],
-    'have': ['has', 'having', 'had', 'had'],
-    'ask': ['asks', 'asking', 'asked', 'asked'],
-    'bring': ['brings', 'bringing', 'brought', 'brought'],
-    'call': ['calls', 'calling', 'called', 'called'],
-    'come': ['comes', 'coming', 'came', 'come'],
-    'do': ['does', 'doing', 'did', 'done'],
-    'drink': ['drinks', 'drinking', 'drank', 'drunk'],
-    'eat': ['eats', 'eating', 'ate', 'eaten'],
-    'feel': ['feels', 'feeling', 'felt', 'felt'],
-    'give': ['gives', 'giving', 'gave', 'given'],
-    'go': ['goes', 'going', 'went', 'gone'],
-    'hear': ['hears', 'hearing', 'heard', 'heard'],
-    'keep': ['keeps', 'keeping', 'kept', 'kept'],
-    'laugh': ['laughs', 'laughing', 'laughed', 'laughed'],
-    'learn': ['learns', 'learning', 'learned', 'learnt'],
-    'see': ['sees', 'seeing', 'saw', 'seen'],
-    'sleep': ['sleeps', 'sleeping', 'slept', 'slept'],
-    'take': ['takes', 'taking', 'took', 'taken'],
-    'tell': ['tells', 'telling', 'told', 'told'],
-    'walk': ['walks', 'walking', 'walked', 'walked'],
-    'write': ['writes', 'writing', 'wrote', 'written'],
+    // 0: imperative, 1: conj for his, 2: continuous, 3: past, 4: past participle
+    'be': ['be', 'is', 'being', 'was', 'been'],
+    'have': ['have', 'has', 'having', 'had', 'had'],
+    'ask': ['ask', 'asks', 'asking', 'asked', 'asked'],
+    'bring': ['bring', 'brings', 'bringing', 'brought', 'brought'],
+    'call': ['call', 'calls', 'calling', 'called', 'called'],
+    'come': ['come', 'comes', 'coming', 'came', 'come'],
+    'do': ['do', 'does', 'doing', 'did', 'done'],
+    'drink': ['drink', 'drinks', 'drinking', 'drank', 'drunk'],
+    'eat': ['eat', 'eats', 'eating', 'ate', 'eaten'],
+    'feel': ['feel', 'feels', 'feeling', 'felt', 'felt'],
+    'give': ['give', 'gives', 'giving', 'gave', 'given'],
+    'go': ['go', 'goes', 'going', 'went', 'gone'],
+    'hear': ['hear', 'hears', 'hearing', 'heard', 'heard'],
+    'keep': ['keep', 'keeps', 'keeping', 'kept', 'kept'],
+    'laugh': ['laugh', 'laughs', 'laughing', 'laughed', 'laughed'],
+    'learn': ['learn', 'learns', 'learning', 'learned', 'learnt'],
+    'putOn': ['put', 'puts', 'putting', 'put', 'put'],
+    'putIn': ['put', 'puts', 'putting', 'put', 'put'],
+    'see': ['see', 'sees', 'seeing', 'saw', 'seen'],
+    'sleep': ['sleep', 'sleeps', 'sleeping', 'slept', 'slept'],
+    'take': ['take', 'takes', 'taking', 'took', 'taken'],
+    'tell': ['tell', 'tells', 'telling', 'told', 'told'],
+    'walk': ['walk', 'walks', 'walking', 'walked', 'walked'],
+    'write': ['write', 'writes', 'writing', 'wrote', 'written'],
 };
 
 function wordsToSentence(words) {
@@ -104,7 +106,7 @@ export function verbConj(subject, verb, tense) {
         response.msg = `verb '${verb}' doesn't have an augmentations entry.`;
         return response;
     }
-    const [verbHe, verbCont, verbPast, verbPP] = augForms;
+    const [verbImp, verbHe, verbCont, verbPast, verbPP] = augForms;
     if(tense.type === 'simple') {
         if(verb === 'be') {
             beConjSimple(pronoun, tense.time, words);
@@ -114,13 +116,13 @@ export function verbConj(subject, verb, tense) {
         }
         else {
             if(tense.time === 'present') {
-                words.push(pronoun === 'he' ? verbHe : verb);
+                words.push(pronoun === 'he' ? verbHe : verbImp);
             }
             else if(tense.time === 'past') {
                 words.push(verbPast);
             }
             else if(tense.time === 'future') {
-                words.push('will', verb);
+                words.push('will', verbImp);
             }
             else {
                 response.status = 'error';
