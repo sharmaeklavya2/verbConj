@@ -23,6 +23,7 @@ export const enToDev = {
     'kar': 'कर',
     'main': 'मैं',
     'maine': 'मैंने',
+    'raha': 'रहा',
     'ta': 'ता',
     'tha': 'था',
     'thay': 'थे',
@@ -235,6 +236,7 @@ export function verbConj(subject, object, verb, tense) {
     const [itrPr, trPr] = getPronouns(subject);
     const isTr = useTrPr(tense, verbInfo.tr);
     words.push(isTr ? trPr : itrPr);
+    const subjObj = subjectToObjct(subject);
     if(verb === 'be') {
         if(tense.type === 'simple') {
             beConjSimple(subject, tense.time, words);
@@ -246,7 +248,6 @@ export function verbConj(subject, object, verb, tense) {
         }
     }
     else if(tense.type === 'simple') {
-        const subjObj = subjectToObjct(subject);
         if(tense.time === 'present') {
             const taForm = trnByObject(enToDev.ta, subjObj, false);
             words.push(verbInfo.cont + taForm);
@@ -264,9 +265,10 @@ export function verbConj(subject, object, verb, tense) {
         }
     }
     else if(tense.type === 'continuous') {
-        response.status = 'unimpl';
-        response.msg = `tense type '${tense.type}' is unimplemented.`;
-        return response;
+        words.push(verbInfo.cont);
+        const rahaForm = trnByObject(enToDev.raha, subjObj, false);
+        words.push(rahaForm);
+        beConjSimple(subject, tense.time, words);
     }
     else if(tense.type === 'perfect') {
         response.status = 'unimpl';
