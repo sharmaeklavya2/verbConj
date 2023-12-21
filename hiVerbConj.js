@@ -1,11 +1,6 @@
 export const enToDev = {
     '.': '।',
     'aap': 'आप',
-    'dekh': 'देख',
-    'dekha': 'देखा',
-    'likh': 'लिख',
-    'likha': 'लिखा',
-    'gaya': 'गया',
     'hai': 'है',
     'hain': 'हैं',
     'ho': 'हो',
@@ -19,16 +14,11 @@ export const enToDev = {
     'houngi': 'होऊँगी',
     'hum': 'हम',
     'humne': 'हमने',
-    'ja': 'जा',
-    'kar': 'कर',
     'main': 'मैं',
     'maine': 'मैंने',
     'raha': 'रहा',
     'ta': 'ता',
     'tha': 'था',
-    'thay': 'थे',
-    'thee': 'थी',
-    'theen': 'थीं',
     'tum': 'तुम',
     'tumne': 'तुमने',
     'unhone': 'उन्होंने',
@@ -79,10 +69,14 @@ export const verbInfos = {
     // 'tr': is transitive
     'be': {'tr': false},
     'have': null,
-    'do': {'tr': true, 'cont': enToDev.kar, 'past': enToDev.kiya},
-    'see': {'tr': true, 'cont': enToDev.dekh, 'past': enToDev.dekha},
-    'write': {'tr': true, 'cont': enToDev.likh, 'past': enToDev.likha},
-    'go': {'tr': false, 'cont': enToDev.ja, 'past': enToDev.gaya},
+    'come': {'tr': true, 'cont': 'आ', 'past': 'आया'},
+    'do': {'tr': true, 'cont': 'कर', 'past': 'किया'},
+    'eat': {'tr': true, 'cont': 'खा', 'past': 'खाया'},
+    'go': {'tr': false, 'cont': 'जा', 'past': 'गया'},
+    'see': {'tr': true, 'cont': 'देख', 'past': 'देखा'},
+    'sleep': {'tr': false, 'cont': 'सो', 'past': 'सोया'},
+    'tell': {'tr': true, 'cont': 'बता', 'past': 'बताया'},
+    'write': {'tr': true, 'cont': 'लिख', 'past': 'लिखा'},
 };
 
 function wordsToSentence(words) {
@@ -269,8 +263,7 @@ export function verbConj(subject, object, verb, tense) {
     }
     else if(tense.type === 'simple') {
         if(tense.time === 'present') {
-            const taForm = trnByObject(enToDev.ta, subjObj, false);
-            words.push(verbInfo.cont + taForm);
+            words.push(verbInfo.cont + trnByObject(enToDev.ta, subjObj, false));
             beConjSimple(subject, 'present', words);
         }
         else if(tense.time === 'past') {
@@ -292,8 +285,7 @@ export function verbConj(subject, object, verb, tense) {
     }
     else if(tense.type === 'continuous') {
         words.push(verbInfo.cont);
-        const rahaForm = trnByObject(enToDev.raha, subjObj, false);
-        words.push(rahaForm);
+        words.push(trnByObject(enToDev.raha, subjObj, false));
         beConjSimple(subject, tense.time, words);
     }
     else if(tense.type === 'perfect') {
