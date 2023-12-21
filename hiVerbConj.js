@@ -54,10 +54,26 @@ export const matras = {
 
 export const chars = {
     'aa': 'आ',
+    'i': 'इ',
     'ii': 'ई',
+    'u': 'उ',
+    'uu': 'ऊ',
     'e': 'ए',
+    'ai': 'ऐ',
+    'o': 'ओ',
+    'au': 'औ',
+    'ga': 'ग',
     'ya': 'य',
 };
+
+export function isConsonant(ch) {
+    const blockSize = 0x80, devStartPoint = 0x0900;
+    const codePoint = ch.codePointAt(0);
+    const blockOffset = codePoint & (blockSize - 1);
+    const blockStartPoint = codePoint & (-blockSize);
+    return blockStartPoint === devStartPoint && ((blockOffset >= 0x15 && blockOffset <= 0x39)
+            || (blockOffset >= 0x58 && blockOffset <= 0x5f));
+}
 
 export const verbInfos = {
     // 'tr': is transitive
@@ -198,19 +214,23 @@ function beConjSimple(subject, tenseTime, words) {
     }
 }
 
-/*
-function getTaSuffix(subject) {
-    if(subject.type === 1 && subject.number === 'p') {
-        return enToDev.te;
+function getFutureSuffix(subject, beginWithMatra) {
+    const com = beginWithMatra ? matras : chars;
+    const gaaOrGii = chars.ga + (subject.gender === 'm' ? matras.aa : matras.ii);
+    const geOrGii = chars.ga + (subject.gender === 'm' ? matras.e : matras.ii);
+    if(subject.type === '1' && subject.number === 's') {
+        return com.uu + matras.cbindu + gaaOrGii;
     }
-    else if(subject.type != 2 && subject.number === 's') {
-        return (subject.gender === 'm' ? enToDev.ta : enToDev.ti);
+    else if(subject.type === '1' && subject.number === 'p') {
+        return com.e + matras.cbindu + chars.ga + matras.e;
+    }
+    else if(subject.number === 's') {
+        return subject.type === '2' ? com.o + geOrGii : com.e + gaaOrGii;
     }
     else {
-        return (subject.gender === '' ? enToDev.ta : enToDev.ti);
+        return com.e + matras.cbindu + geOrGii;
     }
 }
-*/
 
 export function verbConj(subject, object, verb, tense) {
     const response = {'status': 'ok', 'text': null, 'msg': null};
@@ -257,9 +277,17 @@ export function verbConj(subject, object, verb, tense) {
             words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), true));
         }
         else if(tense.time === 'future') {
-            response.status = 'unimpl';
-            response.msg = `simple future tense is unimplemented.`;
-            return response;
+            const unremovableMatras = [matras.aa, matras.ee, matras.uu, matras.o];
+            const lastChar = verbInfo.cont[verbInfo.cont.length-1];
+            if(lastChar === matras.e) {
+                words.push(verbInfo.cont.slice(0, -1) + getFutureSuffix(subject, true));
+            }
+            if(isConsonant(verbInfo.cont) || unremovableMatras.includes(lastChar)) {
+                words.push(verbInfo.cont + getFutureSuffix(subject, false));
+            }
+            else {
+                throw new Error(`word with unsupported ending: ${word}`);
+            }
         }
     }
     else if(tense.type === 'continuous') {
