@@ -251,18 +251,11 @@ export function verbConj(subject, object, verb, tense) {
     const isTr = useTrPr(tense, verbInfo.tr);
     words.push(isTr ? trPr : itrPr);
     const subjObj = subjectToObjct(subject);
-    if(verb === 'be') {
-        if(tense.type === 'simple') {
+    if(tense.type === 'simple') {
+        if(verb === 'be') {
             beConjSimple(subject, tense.time, words);
         }
-        else {
-            response.status = 'unsupp';
-            response.msg = `verb '${verb}' is unsupported for non-simple tenses.`;
-            return response;
-        }
-    }
-    else if(tense.type === 'simple') {
-        if(tense.time === 'present') {
+        else if(tense.time === 'present') {
             words.push(verbInfo.cont + trnByObject(enToDev.ta, subjObj, false));
             beConjSimple(subject, 'present', words);
         }
