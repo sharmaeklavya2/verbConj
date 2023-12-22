@@ -217,9 +217,10 @@ function beConjSimple(pronoun, tenseTime) {
     }
 }
 
-function getPresentRoot(verb) {
+function getPresentRoot(verbInfo) {
     const yu = chars.ya + matras.u;
-    return (verb[verb.length - 1] !== matras.u) ? verb + yu : verb;
+    const root = verbInfo.root;
+    return (root[root.length - 1] !== matras.u) ? root + yu : root;
 }
 
 export function verbConj(subject, verb, tense) {
@@ -250,7 +251,7 @@ export function verbConj(subject, verb, tense) {
         }
     }
     else if(tense.type === 'simple') {
-        const presentRoot = getPresentRoot(verbInfo.root);
+        const presentRoot = getPresentRoot(verbInfo);
         if(tense.time === 'present') {
             words.push(phConcat([presentRoot, enToKn.tt, prEnd]));
         }
@@ -264,7 +265,7 @@ export function verbConj(subject, verb, tense) {
         }
     }
     else if(tense.type === 'continuous') {
-        const presentRoot = getPresentRoot(verbInfo.root);
+        const presentRoot = getPresentRoot(verbInfo);
         words.push(phConcat([presentRoot, enToKn.tt, chars.aa]));
         words.push(beConjSimple(pronoun, tense.time));
     }
