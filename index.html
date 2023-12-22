@@ -91,7 +91,9 @@ function getOptions(codeToDescr) {
     return options;
 }
 
+const knPronouns = ['1sm', '1pm', '2sm', '2pm', '3sm', '3sf', '3pm', '3sn', '3pn'];
 const pronounOptions = getOptions(pronounCodeToDescr);
+pronounOptions.push(new SelectOption('kn', knPronouns, '(kn)'));
 const objectOptions = getOptions(objectCodeToDescr);
 const verbOptions = getOptions(verbCodeToDescr);
 const tenseOptions = getOptions(tenseCodeToDescr);
