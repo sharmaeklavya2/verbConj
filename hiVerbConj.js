@@ -1,6 +1,7 @@
 export const enToDev = {
     '.': '।',
     'aap': 'आप',
+    'aapne': 'आपने',
     'hai': 'है',
     'hain': 'हैं',
     'ho': 'हो',
