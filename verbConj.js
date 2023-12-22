@@ -1,5 +1,6 @@
 import { verbConj as enVerbConj } from "./enVerbConj.js";
 import { verbConj as hiVerbConj } from "./hiVerbConj.js";
+import { verbConj as knVerbConj } from "./knVerbConj.js";
 
 export function verbConj(subject, object, verb, tense, lang) {
     if(lang === 'en') {
@@ -9,7 +10,7 @@ export function verbConj(subject, object, verb, tense, lang) {
         return hiVerbConj(subject, object, verb, tense);
     }
     else if(lang === 'kn') {
-        throw new Error(`${lang} is not yet implemented.`);
+        return knVerbConj(subject, verb, tense);
     }
     else {
         throw new Error(`Unsupported language ${lang}`);
