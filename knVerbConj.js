@@ -14,6 +14,8 @@ export const chars = {
     'oo': 'ಓ',
     'au': 'ಔ',
 
+    'ta': 'ತ',
+    'da': 'ದ',
     'va': 'ವ',
     'ya': 'ಯ',
 };
@@ -127,25 +129,25 @@ export const verbInfos = {
     'be': {'root': 'ಇರು'},
     'have': null,
     'ask': {'root': 'ಕೇಳು'},
-    'bring': {'root': 'ತರು'},
+    'bring': {'root': 'ತರು', 'past': 'ತಂದ್', 'pastAdu': 'ತಂದಿತು'},
     'call': {'root': 'ಕರೆ'},
-    'come': {'root': 'ಬರು'},
+    'come': {'root': 'ಬರು', 'past': 'ಬಂದ್', 'pastAdu': 'ಬಂತು'},
     'do': {'root': 'ಮಾಡು'},
     'drink': {'root': 'ಕುಡಿ'},
-    'eat': {'root': 'ತಿನ್ನು'},
+    'eat': {'root': 'ತಿನ್ನು', 'past': 'ತಿಂದ್', 'pastAdu': 'ತಿಂದಿತು'},
     'feel': {'root': 'ಅನಿಸು'},
-    'give': {'root': 'ಕೊಡು'},
-    'go': {'root': 'ಹೋಗು'},
+    'give': {'root': 'ಕೊಡು', 'past': 'ಕೊಟ್ಟ್', 'pastAdu': 'ಕೊಟ್ಟಿತು'},
+    'go': {'root': 'ಹೋಗು', 'past': 'ಹೊದ್', 'pastAdu': 'ಹೋಯಿತು', 'perfect': 'ಹೋಗ್'},
     'hear': {'root': 'ಕೇಳು'},
-    'keep': {'root': 'ಇದು'},
-    'laugh': {'root': 'ನಗು'},
+    'keep': {'root': 'ಇದು', 'past': 'ಇಟ್ಟ್', 'pastAdu': 'ಇಟ್ಟಿತು'},
+    'laugh': {'root': 'ನಗು', 'past': 'ನಕ್ಕ್', 'pastAdu': 'ನಕ್ಕಿತು'},
     'learn': {'root': 'ಕಲಿ'},
     'putOn': {'root': 'ಹಾಕು'},
-    'putIn': null,
+    'putIn': undefined,
     'see': {'root': 'ನೋಡು'},
     'sleep': {'root': 'ಮಲಗು'},
-    'take': null,
-    'tell': null,
+    'take': undefined,
+    'tell': {'root': 'ಹೇಳು'},
     'walk': {'root': 'ನಡೆ'},
     'write': {'root': 'ಬರೆ'},
 };
@@ -223,6 +225,56 @@ function getPresentRoot(verbInfo) {
     return (root[root.length - 1] !== matras.u) ? root + yu : root;
 }
 
+function getPastRoot(verbInfo) {
+    if(verbInfo.past !== undefined) {
+        return verbInfo.past;
+    }
+    else {
+        const root = verbInfo.root;
+        const dat = chars.da + matras.talk;
+        if(root[root.length-1] === matras.u) {
+            return root.slice(0, -1) + matras.i + dat;
+        }
+        else {
+            return root + dat;
+        }
+    }
+}
+
+function getPastAdu(verbInfo) {
+    if(verbInfo.pastAdu !== undefined) {
+        return verbInfo.pastAdu;
+    }
+    else {
+        const root = verbInfo.root;
+        const itu = matras.i + chars.ta + matras.u;
+        if(root[root.length-1] === matras.u) {
+            return root.slice(0, -1) + itu;
+        }
+        else {
+            return root + chars.ya + itu;
+        }
+    }
+}
+
+function getPerfectRoot(verbInfo) {
+    if(verbInfo.perfect !== undefined) {
+        return verbInfo.perfect;
+    }
+    else if(verbInfo.past !== undefined) {
+        return verbInfo.past;
+    }
+    else {
+        const root = verbInfo.root;
+        if(root[root.length-1] === matras.u) {
+            return root.slice(0, -1) + matras.talk;
+        }
+        else {
+            return root + chars.da + matras.talk;
+        }
+    }
+}
+
 export function verbConj(subject, verb, tense) {
     const response = {'status': 'ok', 'text': null, 'msg': null};
     const words = [];
@@ -259,9 +311,13 @@ export function verbConj(subject, verb, tense) {
             words.push(phConcat([presentRoot, chars.va + matras.talk, fuEnd]));
         }
         else {
-            response.status = 'unimpl';
-            response.msg = `simple past is unimplemented.`;
-            return response;
+            if(pronoun === 'adu') {
+                words.push(getPastAdu(verbInfo));
+            }
+            else {
+                const pastRoot = getPastRoot(verbInfo);
+                words.push(phConcat([pastRoot, fuEnd]));
+            }
         }
     }
     else if(tense.type === 'continuous') {
@@ -270,9 +326,9 @@ export function verbConj(subject, verb, tense) {
         words.push(beConjSimple(pronoun, tense.time));
     }
     else if(tense.type === 'perfect') {
-        response.status = 'unimpl';
-        response.msg = `tense type '${tense.type}' is unimplemented.`;
-        return response;
+        const perfectRoot = getPerfectRoot(verbInfo);
+        const beConj = beConjSimple(pronoun, tense.time);
+        words.push(phConcat([perfectRoot, beConj]));
     }
     else {
         response.status = 'unimpl';
