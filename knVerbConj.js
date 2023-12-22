@@ -13,6 +13,9 @@ export const chars = {
     'o': 'ಒ',
     'oo': 'ಓ',
     'au': 'ಔ',
+
+    'va': 'ವ',
+    'ya': 'ಯ',
 };
 
 export const matras = {
@@ -121,8 +124,30 @@ export const enToKn = {
 };
 
 export const verbInfos = {
-    'be': {},
+    'be': {'root': 'ಇರು'},
     'have': null,
+    'ask': {'root': 'ಕೇಳು'},
+    'bring': {'root': 'ತರು'},
+    'call': {'root': 'ಕರೆ'},
+    'come': {'root': 'ಬರು'},
+    'do': {'root': 'ಮಾಡು'},
+    'drink': {'root': 'ಕುಡಿ'},
+    'eat': {'root': 'ತಿನ್ನು'},
+    'feel': {'root': 'ಅನಿಸು'},
+    'give': {'root': 'ಕೊಡು'},
+    'go': {'root': 'ಹೋಗು'},
+    'hear': {'root': 'ಕೇಳು'},
+    'keep': {'root': 'ಇದು'},
+    'laugh': {'root': 'ನಗು'},
+    'learn': {'root': 'ಕಲಿ'},
+    'putOn': {'root': 'ಹಾಕು'},
+    'putIn': null,
+    'see': {'root': 'ನೋಡು'},
+    'sleep': {'root': 'ಮಲಗು'},
+    'take': null,
+    'tell': null,
+    'walk': {'root': 'ನಡೆ'},
+    'write': {'root': 'ಬರೆ'},
 };
 
 const endings = {
@@ -192,6 +217,11 @@ function beConjSimple(pronoun, tenseTime) {
     }
 }
 
+function getPresentRoot(verb) {
+    const yu = chars.ya + matras.u;
+    return (verb[verb.length - 1] !== matras.u) ? verb + yu : verb;
+}
+
 export function verbConj(subject, verb, tense) {
     const response = {'status': 'ok', 'text': null, 'msg': null};
     const words = [];
@@ -219,9 +249,33 @@ export function verbConj(subject, verb, tense) {
             return response;
         }
     }
+    else if(tense.type === 'simple') {
+        const presentRoot = getPresentRoot(verbInfo.root);
+        if(tense.time === 'present') {
+            words.push(phConcat([presentRoot, enToKn.tt, prEnd]));
+        }
+        else if(tense.time === 'future') {
+            words.push(phConcat([presentRoot, chars.va + matras.talk, fuEnd]));
+        }
+        else {
+            response.status = 'unimpl';
+            response.msg = `simple past is unimplemented.`;
+            return response;
+        }
+    }
+    else if(tense.type === 'continuous') {
+        const presentRoot = getPresentRoot(verbInfo.root);
+        words.push(phConcat([presentRoot, enToKn.tt, chars.aa]));
+        words.push(beConjSimple(pronoun, tense.time));
+    }
+    else if(tense.type === 'perfect') {
+        response.status = 'unimpl';
+        response.msg = `tense type '${tense.type}' is unimplemented.`;
+        return response;
+    }
     else {
         response.status = 'unimpl';
-        response.msg = `verb '${verb}' is unimplemented.`;
+        response.msg = `tense type '${tense.type}' is unimplemented.`;
         return response;
     }
     response.text = wordsToSentence(words);
