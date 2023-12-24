@@ -17,6 +17,7 @@ export const enToDev = {
     'humne': 'हमने',
     'main': 'मैं',
     'maine': 'मैंने',
+    'naheen': 'नहीं',
     'raha': 'रहा',
     'ta': 'ता',
     'tha': 'था',
@@ -262,14 +263,12 @@ export function verbConj(subject, object, verb, tense, negate) {
         response.msg = `unsupported verb '${verb}'.`;
         return response;
     }
-    if(negate) {
-        response.status = 'unimpl';
-        response.msg = `negation is unimplemented.`;
-        return response;
-    }
     const [itrPr, trPr] = getPronouns(subject);
     const isTr = useTrPr(tense, verbInfo.tr);
     words.push(isTr ? trPr : itrPr);
+    if(negate) {
+        words.push(enToDev.naheen);
+    }
     const subjObj = subjectToObjct(subject);
     if(tense.type === 'simple') {
         if(verb === 'be') {
@@ -277,7 +276,9 @@ export function verbConj(subject, object, verb, tense, negate) {
         }
         else if(tense.time === 'present') {
             words.push(verbInfo.cont + trnByObject(enToDev.ta, subjObj, false));
-            beConjSimple(subject, 'present', words);
+            if(!negate) {
+                beConjSimple(subject, 'present', words);
+            }
         }
         else if(tense.time === 'past') {
             words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), true));
@@ -298,7 +299,9 @@ export function verbConj(subject, object, verb, tense, negate) {
     else if(tense.type === 'continuous') {
         words.push(verbInfo.cont);
         words.push(trnByObject(enToDev.raha, subjObj, false));
-        beConjSimple(subject, tense.time, words);
+        if(!negate || tense.time !== 'present') {
+            beConjSimple(subject, tense.time, words);
+        }
     }
     else if(tense.type === 'perfect') {
         words.push(trnByObject(verbInfo.past, (isTr ? object : subjObj), false));
