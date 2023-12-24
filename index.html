@@ -109,7 +109,8 @@ const paramS = new Param('subject', new SelectWidget(pronounOptions, '1sm'));
 const paramO = new Param('object', new SelectWidget(objectOptions, 'sm'));
 const paramV = new Param('verb', new SelectWidget(verbOptions, 'see'));
 const paramT = new Param('tense', new SelectWidget(tenseOptions, 'sPr'));
-const paramGroup = new ParamGroup('myForm', [paramS, paramO, paramV, paramT]);
+const paramN = new Param('negate', new CheckBoxWidget());
+const paramGroup = new ParamGroup('myForm', [paramS, paramO, paramV, paramT, paramN]);
 
 function printSentences(input, stdout) {
     const subjects = input.subject;
@@ -131,7 +132,7 @@ function printSentences(input, stdout) {
                     };
                     const row = [];
                     for(const lang of langs) {
-                        const response = verbConj.verbConj(subjectInfo, objectInfo, verb, tenseInfo, lang);
+                        const response = verbConj.verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
                         if(response.status === 'ok' || response.status === 'warn') {
                             row.push(response.text);
                         }

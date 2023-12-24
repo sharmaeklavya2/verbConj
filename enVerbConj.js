@@ -96,7 +96,7 @@ function wordsToSentence(words) {
     return s.charAt(0).toUpperCase() + s.slice(1) + '.';
 }
 
-export function verbConj(subject, verb, tense) {
+export function verbConj(subject, verb, tense, negate) {
     const [writtenPronoun, pronoun] = getPronouns(subject);
     const words = [writtenPronoun];
     const response = {'status': 'ok', 'text': null, 'msg': null};
@@ -104,6 +104,11 @@ export function verbConj(subject, verb, tense) {
     if(augForms === undefined) {
         response.status = 'unimpl';
         response.msg = `verb '${verb}' doesn't have an augmentations entry.`;
+        return response;
+    }
+    if(negate) {
+        response.status = 'unimpl';
+        response.msg = `negation is unimplemented.`;
         return response;
     }
     const [verbImp, verbHe, verbCont, verbPast, verbPP] = augForms;

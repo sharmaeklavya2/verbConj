@@ -241,7 +241,7 @@ function getFutureSuffix(subject, beginWithMatra) {
     }
 }
 
-export function verbConj(subject, object, verb, tense) {
+export function verbConj(subject, object, verb, tense, negate) {
     const response = {'status': 'ok', 'text': null, 'msg': null};
     if(subject.gender === 'n') {
         subject = {'type': subject.type, 'number': subject.number, 'gender': 'm'};
@@ -260,6 +260,11 @@ export function verbConj(subject, object, verb, tense) {
     else if(verbInfo === null) {
         response.status = 'unsupp';
         response.msg = `unsupported verb '${verb}'.`;
+        return response;
+    }
+    if(negate) {
+        response.status = 'unimpl';
+        response.msg = `negation is unimplemented.`;
         return response;
     }
     const [itrPr, trPr] = getPronouns(subject);

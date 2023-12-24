@@ -275,7 +275,7 @@ function getPerfectRoot(verbInfo) {
     }
 }
 
-export function verbConj(subject, verb, tense) {
+export function verbConj(subject, verb, tense, negate) {
     const response = {'status': 'ok', 'text': null, 'msg': null};
     const words = [];
     const verbInfo = verbInfos[verb];
@@ -290,6 +290,11 @@ export function verbConj(subject, verb, tense) {
     else if(verbInfo === null) {
         response.status = 'unsupp';
         response.msg = `unsupported verb '${verb}'.`;
+        return response;
+    }
+    if(negate) {
+        response.status = 'unimpl';
+        response.msg = `negation is unimplemented.`;
         return response;
     }
     if(verb === 'be') {
