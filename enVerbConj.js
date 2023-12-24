@@ -24,12 +24,15 @@ function getPronouns(subject) {
     }
 }
 
-function beConjSimple(pronoun, tenseTime, words) {
+function beConjSimple(pronoun, tenseTime, negate, words) {
     if(tenseTime === 'present') {
         switch(pronoun) {
             case 'I': words.push('am'); break;
             case 'he': words.push('is'); break;
             case 'they': words.push('are'); break;
+        }
+        if(negate) {
+            words.push('not');
         }
     }
     else if(tenseTime === 'past') {
@@ -38,9 +41,15 @@ function beConjSimple(pronoun, tenseTime, words) {
             case 'he': words.push('was'); break;
             case 'they': words.push('were'); break;
         }
+        words[words.length-1] += "n't";
     }
     else if(tenseTime === 'future') {
-        words.push('will', 'be');
+        if(negate) {
+            words.push("won't", 'be');
+        }
+        else {
+            words.push('will', 'be');
+        }
     }
 }
 
@@ -57,6 +66,18 @@ function haveConjSimple(pronoun, tenseTime, words) {
     }
     else if(tenseTime === 'future') {
         words.push('will', 'have');
+    }
+}
+
+function doConjSimple(pronoun, tenseTime, words) {
+    if(tenseTime === 'present') {
+        words.push(pronoun === 'he' ? 'does' : 'do');
+    }
+    else if(tenseTime === 'past') {
+        words.push('did');
+    }
+    else if(tenseTime === 'future') {
+        words.push('will', 'do');
     }
 }
 
@@ -106,18 +127,23 @@ export function verbConj(subject, verb, tense, negate) {
         response.msg = `verb '${verb}' doesn't have an augmentations entry.`;
         return response;
     }
-    if(negate) {
-        response.status = 'unimpl';
-        response.msg = `negation is unimplemented.`;
-        return response;
-    }
     const [verbImp, verbHe, verbCont, verbPast, verbPP] = augForms;
     if(tense.type === 'simple') {
         if(verb === 'be') {
-            beConjSimple(pronoun, tense.time, words);
+            beConjSimple(pronoun, tense.time, negate, words);
         }
-        else if(verb === 'have') {
+        else if(verb === 'have' && !negate) {
             haveConjSimple(pronoun, tense.time, words);
+        }
+        else if(negate) {
+            if(tense.time !== 'future') {
+                doConjSimple(pronoun, tense.time, words);
+                words[words.length-1] += "n't";
+                words.push(verbImp);
+            }
+            else {
+                words.push("won't", verbImp);
+            }
         }
         else {
             if(tense.time === 'present') {
@@ -137,11 +163,22 @@ export function verbConj(subject, verb, tense, negate) {
         }
     }
     else if(tense.type === 'continuous') {
-        beConjSimple(pronoun, tense.time, words);
+        beConjSimple(pronoun, tense.time, negate, words);
         words.push(verbCont);
     }
     else if(tense.type === 'perfect') {
-        haveConjSimple(pronoun, tense.time, words);
+        if(negate) {
+            if(tense.time === 'future') {
+                words.push("won't", 'have');
+            }
+            else {
+                haveConjSimple(pronoun, tense.time, words);
+                words[words.length-1] += "n't";
+            }
+        }
+        else {
+            haveConjSimple(pronoun, tense.time, words);
+        }
         words.push(verbPP);
     }
     else {
