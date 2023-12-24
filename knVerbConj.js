@@ -125,6 +125,18 @@ export const enToKn = {
     'tt': 'ತ್ತ್',
 };
 
+const negIru = {
+    'present': 'ಇಲ್ಲ',
+    'past': 'ಇರಲಿಲ್ಲ',
+    'future': 'ಇರಲ್ಲ',
+};
+
+const negSuffix = {
+    'present': 'ಅಲ್ಲ',
+    'past': 'ಅಲಿಲ್ಲ',
+    'future': 'ಉವುದಿಲ್ಲ',
+};
+
 export const verbInfos = {
     'be': {'root': 'ಇರು'},
     'have': null,
@@ -193,7 +205,10 @@ function getPronoun(subject) {
 
 // [ Conjugation Logic ]=======================================================
 
-function beConjSimple(pronoun, tenseTime) {
+function beConjSimple(pronoun, tenseTime, negate) {
+    if(negate) {
+        return negIru[tenseTime];
+    }
     const [prEnd, fuEnd] = endings[pronoun];
     if(tenseTime === 'present') {
         if(pronoun === 'adu') {
@@ -292,14 +307,9 @@ export function verbConj(subject, verb, tense, negate) {
         response.msg = `unsupported verb '${verb}'.`;
         return response;
     }
-    if(negate) {
-        response.status = 'unimpl';
-        response.msg = `negation is unimplemented.`;
-        return response;
-    }
     if(verb === 'be') {
         if(tense.type === 'simple') {
-            words.push(beConjSimple(pronoun, tense.time));
+            words.push(beConjSimple(pronoun, tense.time, negate));
         }
         else {
             response.status = 'unsupp';
@@ -309,7 +319,11 @@ export function verbConj(subject, verb, tense, negate) {
     }
     else if(tense.type === 'simple') {
         const presentRoot = getPresentRoot(verbInfo);
-        if(tense.time === 'present') {
+        if(negate) {
+            words.push(phConcat([presentRoot.slice(0, -1) + matras.talk,
+                negSuffix[tense.time]]));
+        }
+        else if(tense.time === 'present') {
             words.push(phConcat([presentRoot, enToKn.tt, prEnd]));
         }
         else if(tense.time === 'future') {
@@ -328,11 +342,11 @@ export function verbConj(subject, verb, tense, negate) {
     else if(tense.type === 'continuous') {
         const presentRoot = getPresentRoot(verbInfo);
         words.push(phConcat([presentRoot, enToKn.tt, chars.aa]));
-        words.push(beConjSimple(pronoun, tense.time));
+        words.push(beConjSimple(pronoun, tense.time, negate));
     }
     else if(tense.type === 'perfect') {
         const perfectRoot = getPerfectRoot(verbInfo);
-        const beConj = beConjSimple(pronoun, tense.time);
+        const beConj = beConjSimple(pronoun, tense.time, negate);
         words.push(phConcat([perfectRoot, beConj]));
     }
     else {
