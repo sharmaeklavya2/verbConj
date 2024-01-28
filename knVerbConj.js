@@ -138,27 +138,34 @@ const negSuffix = {
 };
 
 export const verbInfos = {
-    'be': {'root': 'ಇರು'},
+    'be': {'root': 'ಇರು', 'prp': 'ಇದ್ದ', 'pvp': 'ಇದ್ದು', 'pastAdu': 'ಇತ್ತು'},
     'have': null,
     'ask': {'root': 'ಕೇಳು'},
-    'bring': {'root': 'ತರು', 'past': 'ತಂದ್', 'pastAdu': 'ತಂದಿತು'},
+    'become': {'root': 'ಆಗು', 'prp': 'ಆದ', 'pvp': 'ಆಗಿ', 'pastAdu': 'ಆಯಿತು'},
+    'bring': {'root': 'ತರು', 'prp': 'ತಂದ'},
+    'buy': {'root': 'ಕೊಳ್ಳು', 'prp': 'ಕೊಂಡ'},
     'call': {'root': 'ಕರೆ'},
-    'come': {'root': 'ಬರು', 'past': 'ಬಂದ್', 'pastAdu': 'ಬಂತು'},
+    'come': {'root': 'ಬರು', 'prp': 'ಬಂದ', 'pastAdu': 'ಬಂತು'},
     'do': {'root': 'ಮಾಡು'},
     'drink': {'root': 'ಕುಡಿ'},
-    'eat': {'root': 'ತಿನ್ನು', 'past': 'ತಿಂದ್', 'pastAdu': 'ತಿಂದಿತು'},
+    'eat': {'root': 'ತಿನ್ನು', 'prp': 'ತಿಂದ'},
     'feel': {'root': 'ಅನಿಸು'},
-    'give': {'root': 'ಕೊಡು', 'past': 'ಕೊಟ್ಟ್', 'pastAdu': 'ಕೊಟ್ಟಿತು'},
-    'go': {'root': 'ಹೋಗು', 'past': 'ಹೊದ್', 'pastAdu': 'ಹೋಯಿತು', 'perfect': 'ಹೋಗ್'},
+    'forget': {'root': 'ಮರೆ', 'prp': 'ಮರೆತ'},
+    'give': {'root': 'ಕೊಡು', 'prp': 'ಕೊಟ್ಟ'},
+    'go': {'root': 'ಹೋಗು', 'prp': 'ಹೊದ', 'pvp': 'ಹೋಗಿ', 'pastAdu': 'ಹೋಯಿತು'},
     'hear': {'root': 'ಕೇಳು'},
-    'keep': {'root': 'ಇಡು', 'past': 'ಇಟ್ಟ್', 'pastAdu': 'ಇಟ್ಟಿತು'},
-    'laugh': {'root': 'ನಗು', 'past': 'ನಕ್ಕ್', 'pastAdu': 'ನಕ್ಕಿತು'},
-    'learn': {'root': 'ಕಲಿ'},
+    'keep': {'root': 'ಇಡು', 'prp': 'ಇಟ್ಟ'},
+    'laugh': {'root': 'ನಗು', 'prp': 'ನಕ್ಕ', 'pvp': 'ನಕ್ಕಿ'},
+    'learn': {'root': 'ಕಲಿ', 'prp': 'ಕಲಿತ'},
+    'meet': {'root': 'ಸಿಗು', 'prp': 'ಸಿಕ್ಕ', 'pvp': 'ಸಿಕ್ಕಿ'},
+    'protect': {'root': 'ಕಾ', 'prp': 'ಕಾದ'},
     'putOn': {'root': 'ಹಾಕು'},
     'putIn': undefined,
+    'say': {'root': 'ಅನ್ನು', 'prp': 'ಅಂದ'},
     'see': {'root': 'ನೋಡು'},
     'sleep': {'root': 'ಮಲಗು'},
-    'take': {'root': 'ತೊಗೊಳ್ಳು', 'past': 'ತೊಗೊಂಡ್', 'pastAdu': 'ತೊಗೊಂಡಿತು'},
+    'steal': {'root': 'ಕದಿ', 'prp': 'ಕದ್ದ'},
+    'take': {'root': 'ತೊಗೊಳ್ಳು', 'prp': 'ತೊಗೊಂಡ'},
     'tell': {'root': 'ಹೇಳು'},
     'walk': {'root': 'ನಡೆ'},
     'write': {'root': 'ಬರೆ'},
@@ -240,9 +247,9 @@ function getPresentRoot(verbInfo) {
     return (root[root.length - 1] !== matras.u) ? root + yu : root;
 }
 
-function getPastRoot(verbInfo) {
-    if(verbInfo.past !== undefined) {
-        return verbInfo.past;
+function getPrpTrunc(verbInfo) {
+    if(verbInfo.prp !== undefined) {
+        return verbInfo.prp + matras.talk;
     }
     else {
         const root = verbInfo.root;
@@ -257,27 +264,30 @@ function getPastRoot(verbInfo) {
 }
 
 function getPastAdu(verbInfo) {
+    const itu = matras.i + chars.ta + matras.u;
     if(verbInfo.pastAdu !== undefined) {
         return verbInfo.pastAdu;
     }
+    else if(verbInfo.prp !== undefined) {
+        return phConcat([verbInfo.prp + matras.talk, itu]);
+    }
     else {
         const root = verbInfo.root;
-        const itu = matras.i + chars.ta + matras.u;
         if(root[root.length-1] === matras.u) {
             return root.slice(0, -1) + itu;
         }
         else {
-            return root + chars.ya + itu;
+            return root + chars.da + itu;
         }
     }
 }
 
-function getPerfectRoot(verbInfo) {
-    if(verbInfo.perfect !== undefined) {
-        return verbInfo.perfect;
+function getPvpTrunc(verbInfo) {
+    if(verbInfo.pvp !== undefined) {
+        return verbInfo.pvp.slice(0, -1) + matras.talk;
     }
-    else if(verbInfo.past !== undefined) {
-        return verbInfo.past;
+    else if(verbInfo.prp !== undefined) {
+        return verbInfo.prp + matras.talk;
     }
     else {
         const root = verbInfo.root;
@@ -334,8 +344,8 @@ export function verbConj(subject, verb, tense, negate) {
                 words.push(getPastAdu(verbInfo));
             }
             else {
-                const pastRoot = getPastRoot(verbInfo);
-                words.push(phConcat([pastRoot, fuEnd]));
+                const prpTrunc = getPrpTrunc(verbInfo);
+                words.push(phConcat([prpTrunc, fuEnd]));
             }
         }
     }
@@ -345,9 +355,9 @@ export function verbConj(subject, verb, tense, negate) {
         words.push(beConjSimple(pronoun, tense.time, negate));
     }
     else if(tense.type === 'perfect') {
-        const perfectRoot = getPerfectRoot(verbInfo);
+        const pvpTrunc = getPvpTrunc(verbInfo);
         const beConj = beConjSimple(pronoun, tense.time, negate);
-        words.push(phConcat([perfectRoot, beConj]));
+        words.push(phConcat([pvpTrunc, beConj]));
     }
     else {
         response.status = 'unimpl';
