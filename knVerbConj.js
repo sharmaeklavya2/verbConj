@@ -277,7 +277,7 @@ function getPastAdu(verbInfo) {
             return root.slice(0, -1) + itu;
         }
         else {
-            return root + chars.da + itu;
+            return root + chars.ya + itu;
         }
     }
 }
