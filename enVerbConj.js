@@ -41,7 +41,9 @@ function beConjSimple(pronoun, tenseTime, negate, words) {
             case 'he': words.push('was'); break;
             case 'they': words.push('were'); break;
         }
-        words[words.length-1] += "n't";
+        if(negate) {
+            words[words.length-1] += "n't";
+        }
     }
     else if(tenseTime === 'future') {
         if(negate) {
