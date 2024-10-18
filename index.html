@@ -7,10 +7,9 @@
 <title>Verb Conjugator</title>
 
 <link rel="stylesheet" href="https://sharmaeklavya2.github.io/funcToForm/funcToForm.css" />
-<script type="text/javascript" src="https://sharmaeklavya2.github.io/funcToForm/funcToForm.js"></script>
+<script type="module" src="https://sharmaeklavya2.github.io/funcToForm/v2.js"></script>
 <!--
 <link rel="stylesheet" href="http://localhost:8080/websites/funcToForm/funcToForm.css" />
-<script type="text/javascript" src="http://localhost:8080/websites/funcToForm/funcToForm.js"></script>
 -->
 
 <script type="module" src="verbConj.js"></script>
@@ -21,10 +20,10 @@
 <link rel="stylesheet" href="https://sharmaeklavya2.github.io/trin/trin.css" />
 <link rel="prefetch" href="https://sharmaeklavya2.github.io/trin/trin.js" />
 <script type="module" src="https://sharmaeklavya2.github.io/trin/trinUI.js?init=true"></script>
-<script>
-'use strict';
-let verbConj = null;
-let dcLoaded = false;
+<script type="module">
+ import * as f2f from "https://sharmaeklavya2.github.io/funcToForm/v2.js";
+// import * as f2f from "http://localhost:8080/websites/funcToForm/v2.js";
+import * as verbConj from "./verbConj.js";
 
 function arraysEqual(a, b) {
     if (a === b) {return true;}
@@ -92,26 +91,26 @@ for(const verb of verbs) {
 function getOptions(codeToDescr) {
     const options = [], keys = [];
     for(const [x, y] of Object.entries(codeToDescr)) {
-        options.push(new SelectOption(x, [x], y));
+        options.push(new f2f.SelectOption({name: x, value: [x], text: y}));
         keys.push(x);
     }
-    options.push(new SelectOption('all', keys, '(all)'));
+    options.push(new f2f.SelectOption({name: 'all', value: keys, text: '(all)'}));
     return options;
 }
 
 const knPronouns = ['1sm', '1pm', '2sm', '2pm', '3sm', '3sf', '3pm', '3sn', '3pn'];
 const pronounOptions = getOptions(pronounCodeToDescr);
-pronounOptions.push(new SelectOption('kn', knPronouns, '(kn)'));
-pronounOptions.push(new SelectOption('en', ['1sm', '2sm', '3sm', '3pm'], '(en)'));
+pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
+pronounOptions.push(new f2f.SelectOption({name: 'en', value: ['1sm', '2sm', '3sm', '3pm'], text: '(en)'}));
 const objectOptions = getOptions(objectCodeToDescr);
 const verbOptions = getOptions(verbCodeToDescr);
 const tenseOptions = getOptions(tenseCodeToDescr);
-const paramS = new Param('subject', new SelectWidget(pronounOptions, '1sm'));
-const paramO = new Param('object', new SelectWidget(objectOptions, 'sm'));
-const paramV = new Param('verb', new SelectWidget(verbOptions, 'see'));
-const paramT = new Param('tense', new SelectWidget(tenseOptions, 'sPr'));
-const paramN = new Param('negate', new CheckBoxWidget());
-const paramGroup = new ParamGroup('myForm', [paramS, paramO, paramV, paramT, paramN]);
+const paramS = new f2f.Param('subject', new f2f.SelectWidget(pronounOptions, '1sm'));
+const paramO = new f2f.Param('object', new f2f.SelectWidget(objectOptions, 'sm'));
+const paramV = new f2f.Param('verb', new f2f.SelectWidget(verbOptions, 'see'));
+const paramT = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
+const paramN = new f2f.Param('negate', new f2f.CheckBoxWidget());
+const paramGroup = new f2f.ParamGroup(undefined, [paramS, paramO, paramV, paramT, paramN]);
 
 function printSentences(input, stdout) {
     const subjects = input.subject;
@@ -147,17 +146,8 @@ function printSentences(input, stdout) {
         }
     }
 }
-import('./verbConj.js').then((m) => {
-    verbConj = m;
-    if(dcLoaded) {
-        createForm('myApp', paramGroup, printSentences);
-    }
-});
 window.addEventListener('DOMContentLoaded', function() {
-    dcLoaded = true;
-    if(verbConj !== null) {
-        createForm('myApp', paramGroup, printSentences);
-    }
+    f2f.createForm('myApp', paramGroup, printSentences);
 });
 </script>
 </head>
