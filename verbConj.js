@@ -3,7 +3,7 @@ import { verbConj as hiVerbConj } from "./hiVerbConj.js";
 import { verbConj as knVerbConj } from "./knVerbConj.js";
 import * as f2f from "funcToForm";
 
-export function verbConj(subject, object, verb, tense, negate, lang) {
+function verbConj(subject, object, verb, tense, negate, lang) {
     if(lang === 'en') {
         return enVerbConj(subject, verb, tense, negate);
     }
@@ -83,7 +83,7 @@ function getOptions(codeToDescr) {
     return options;
 }
 
-function getParamGroup() {
+export function getParamGroup() {
     const pronounOptions = getOptions(pronounCodeToDescr);
     pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
     pronounOptions.push(new f2f.SelectOption({name: 'en', value: ['1sm', '2sm', '3sm', '3pm'], text: '(en)'}));
@@ -132,7 +132,7 @@ function cartProd(arrList) {
     return output;
 }
 
-function printSentences(input, stdout) {
+export function printSentences(input, stdout) {
     const langCodes = [], langNames = [];
     for(const [langCode, selected] of Object.entries(input.langs)) {
         if(selected) {
@@ -163,9 +163,3 @@ function printSentences(input, stdout) {
         stdout.tableRow(outputRow);
     }
 }
-
-//=[ event listeners ]==========================================================
-
-window.addEventListener('DOMContentLoaded', function() {
-    f2f.createForm('myApp', getParamGroup(), printSentences);
-});

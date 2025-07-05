@@ -22,7 +22,14 @@
 <link rel="modulepreload" href="knVerbConj.js" />
 
 <script type="module" src="https://sharmaeklavya2.github.io/trin/trinUI.js?init=true"></script>
-<script type="module" src="verbConj.js"></script>
+<script type="module">
+import * as f2f from "funcToForm";
+import {getParamGroup, printSentences} from "./verbConj.js";
+
+window.addEventListener('DOMContentLoaded', function() {
+    f2f.createForm('myApp', getParamGroup(), printSentences);
+});
+</script>
 </head>
 
 <body>
