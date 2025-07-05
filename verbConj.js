@@ -71,7 +71,7 @@ for(const verb of verbs) {
 }
 const knPronouns = ['1sm', '1pm', '2sm', '2pm', '3sm', '3sf', '3pm', '3sn', '3pn'];
 
-//=[ UI ]=======================================================================
+//=[ form creation ]============================================================
 
 function getOptions(codeToDescr) {
     const options = [], keys = [];
@@ -83,54 +83,77 @@ function getOptions(codeToDescr) {
     return options;
 }
 
-const pronounOptions = getOptions(pronounCodeToDescr);
-pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
-pronounOptions.push(new f2f.SelectOption({name: 'en', value: ['1sm', '2sm', '3sm', '3pm'], text: '(en)'}));
-const objectOptions = getOptions(objectCodeToDescr);
-const verbOptions = getOptions(verbCodeToDescr);
-const tenseOptions = getOptions(tenseCodeToDescr);
-const paramS = new f2f.Param('subject', new f2f.SelectWidget(pronounOptions, '1sm'));
-const paramO = new f2f.Param('object', new f2f.SelectWidget(objectOptions, 'sm'));
-const paramV = new f2f.Param('verb', new f2f.SelectWidget(verbOptions, 'see'));
-const paramT = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
-const paramN = new f2f.Param('negate', new f2f.CheckBoxWidget());
-const paramGroup = new f2f.ParamGroup(undefined, [paramS, paramO, paramV, paramT, paramN]);
+function getParamGroup() {
+    const pronounOptions = getOptions(pronounCodeToDescr);
+    pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
+    pronounOptions.push(new f2f.SelectOption({name: 'en', value: ['1sm', '2sm', '3sm', '3pm'], text: '(en)'}));
+    const subjectParam = new f2f.Param('subject', new f2f.SelectWidget(pronounOptions, '1sm'));
 
-function printSentences(input, stdout) {
-    const subjects = input.subject;
-    const objects = input.object;
-    const verbs = input.verb;
-    const tenses = input.tense;
-    const langs = ['en', 'hi', 'kn'];
-    const langNames = langs.map((x) => langCodeToLangName[x]);
-    stdout.tableRow(langNames, true);
-    for(const subject of subjects) {
-        const subjectInfo = {'type': subject[0], 'number': subject[1], 'gender': subject[2]};
-        for(const object of objects) {
-            const objectInfo = {'number': object[0], 'gender': object[1]};
-            for(const verb of verbs) {
-                for(const tense of tenses) {
-                    const tenseInfo = {
-                        'type': tenseTypeCodeToTenseTypeName[tense[0]],
-                        'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
-                    };
-                    const row = [];
-                    for(const lang of langs) {
-                        const response = verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
-                        if(response.status === 'ok' || response.status === 'warn') {
-                            row.push(response.text);
-                        }
-                        else {
-                            row.push(response.status + ': ' + response.msg);
-                        }
-                    }
-                    stdout.tableRow(row);
-                }
+    const objectOptions = getOptions(objectCodeToDescr);
+    const objectParam = new f2f.Param('object', new f2f.SelectWidget(objectOptions, 'sm'));
+
+    const verbOptions = getOptions(verbCodeToDescr);
+    const verbParam = new f2f.Param('verb', new f2f.SelectWidget(verbOptions, 'see'));
+
+    const tenseOptions = getOptions(tenseCodeToDescr);
+    const tenseParam = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
+
+    const negateParam = new f2f.Param('negate', new f2f.CheckBoxWidget());
+    const paramGroup = new f2f.ParamGroup(undefined, [subjectParam, objectParam, verbParam,
+        tenseParam, negateParam]);
+    return paramGroup;
+}
+
+//=[ displaying results ]=======================================================
+
+function cartProd(arrList) {
+    const output = [];
+    function helper(prefix) {
+        if(prefix.length === arrList.length) {
+            output.push(prefix.slice());
+        }
+        else {
+            const a = arrList[prefix.length];
+            for(const x of a) {
+                prefix.push(x);
+                helper(prefix);
+                prefix.pop(x);
             }
         }
     }
+    helper([]);
+    return output;
 }
 
+function printSentences(input, stdout) {
+    const langs = Object.keys(langCodeToLangName);
+    const langNames = langs.map((x) => langCodeToLangName[x]);
+    stdout.tableRow(langNames, true);
+
+    const inputRows = cartProd([input.subject, input.object, input.verb, input.tense]);
+    for(const [subject, object, verb, tense] of inputRows) {
+        const subjectInfo = {'type': subject[0], 'number': subject[1], 'gender': subject[2]};
+        const objectInfo = {'number': object[0], 'gender': object[1]};
+        const tenseInfo = {
+            'type': tenseTypeCodeToTenseTypeName[tense[0]],
+            'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
+        };
+        const outputRow = [];
+        for(const lang of langs) {
+            const response = verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
+            if(response.status === 'ok' || response.status === 'warn') {
+                outputRow.push(response.text);
+            }
+            else {
+                outputRow.push(response.status + ': ' + response.msg);
+            }
+        }
+        stdout.tableRow(outputRow);
+    }
+}
+
+//=[ event listeners ]==========================================================
+
 window.addEventListener('DOMContentLoaded', function() {
-    f2f.createForm('myApp', paramGroup, printSentences);
+    f2f.createForm('myApp', getParamGroup(), printSentences);
 });
