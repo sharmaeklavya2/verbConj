@@ -99,8 +99,15 @@ function getParamGroup() {
     const tenseParam = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
 
     const negateParam = new f2f.Param('negate', new f2f.CheckBoxWidget());
+
+    const langParams = [];
+    for(const [langCode, langName] of Object.entries(langCodeToLangName)) {
+        langParams.push(new f2f.Param(langCode, new f2f.CheckBoxWidget({defVal: true}), {label: langName}));
+    }
+    const langsParamGroup = new f2f.ParamGroup('langs', langParams, {label: 'languages', compact: true});
+
     const paramGroup = new f2f.ParamGroup(undefined, [subjectParam, objectParam, verbParam,
-        tenseParam, negateParam]);
+        tenseParam, negateParam, langsParamGroup]);
     return paramGroup;
 }
 
@@ -126,8 +133,13 @@ function cartProd(arrList) {
 }
 
 function printSentences(input, stdout) {
-    const langs = Object.keys(langCodeToLangName);
-    const langNames = langs.map((x) => langCodeToLangName[x]);
+    const langCodes = [], langNames = [];
+    for(const [langCode, selected] of Object.entries(input.langs)) {
+        if(selected) {
+            langCodes.push(langCode);
+            langNames.push(langCodeToLangName[langCode]);
+        }
+    }
     stdout.tableRow(langNames, true);
 
     const inputRows = cartProd([input.subject, input.object, input.verb, input.tense]);
@@ -139,7 +151,7 @@ function printSentences(input, stdout) {
             'time': tenseTimeCodeToTenseTimeName[tense.slice(1)]
         };
         const outputRow = [];
-        for(const lang of langs) {
+        for(const lang of langCodes) {
             const response = verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
             if(response.status === 'ok' || response.status === 'warn') {
                 outputRow.push(response.text);
