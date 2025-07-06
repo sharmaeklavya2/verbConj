@@ -101,8 +101,8 @@ export const verbInfos = {
 };
 
 function wordsToSentence(words) {
-    if(words === null || words.length === 0) {
-        return null;
+    if(words === undefined || words.length === 0) {
+        return undefined;
     }
     return words.join(' ') + enToDev['.'];
 }
@@ -166,7 +166,7 @@ function trnByObject(word, object, useFp=false) {
         }
     }
     else if(object.gender === 'f') {
-        let sing = null;
+        let sing = undefined;
         if(word.endsWith(iyaa)) {
             sing = word.slice(0, -iyaa.length) + matras.ii;
         }
@@ -248,7 +248,7 @@ function getFutureSuffix(subject, beginWithMatra) {
 }
 
 export function verbConj(subject, object, verb, tense, negate) {
-    const response = {'status': 'ok', 'text': null, 'msg': null};
+    const response = {'status': 'ok', 'text': undefined, 'msg': undefined};
     if(subject.gender === 'n') {
         subject = {'type': subject.type, 'number': subject.number, 'gender': 'm'};
         response.status = 'warn';

@@ -191,8 +191,8 @@ const endings = {
 // [ Utilities ]===============================================================
 
 function wordsToSentence(words) {
-    if(words === null || words.length === 0) {
-        return null;
+    if(words === undefined || words.length === 0) {
+        return undefined;
     }
     return words.join(' ') + '.';
 }
@@ -306,7 +306,7 @@ function getPvpTrunc(verbInfo) {
 }
 
 export function verbConj(subject, verb, tense, negate) {
-    const response = {'status': 'ok', 'text': null, 'msg': null};
+    const response = {'status': 'ok', 'text': undefined, 'msg': undefined};
     const words = [];
     const verbInfo = verbInfos[verb];
     const pronoun = getPronoun(subject);

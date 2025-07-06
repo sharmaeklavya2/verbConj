@@ -117,8 +117,8 @@ export const augmentations = {
 };
 
 function wordsToSentence(words) {
-    if(words === null || words.length === 0) {
-        return null;
+    if(words === undefined || words.length === 0) {
+        return undefined;
     }
     const s = words.join(' ');
     return s.charAt(0).toUpperCase() + s.slice(1) + '.';
@@ -127,7 +127,7 @@ function wordsToSentence(words) {
 export function verbConj(subject, verb, tense, negate) {
     const [writtenPronoun, pronoun] = getPronouns(subject);
     const words = [writtenPronoun];
-    const response = {'status': 'ok', 'text': null, 'msg': null};
+    const response = {'status': 'ok', 'text': undefined, 'msg': undefined};
     const augForms = augmentations[verb];
     if(augForms === undefined) {
         response.status = 'unimpl';
