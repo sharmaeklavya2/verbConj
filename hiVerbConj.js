@@ -1,3 +1,8 @@
+import {Script} from './indianCharUtil.js';
+
+const HI = new Script(0x0900);
+HI.chars.ga = 'ग';
+
 export const enToDev = {
     '.': '।',
     'aap': 'आप',
@@ -28,44 +33,6 @@ export const enToDev = {
     'vah': 'वह',
     've': 'वे',
 };
-
-export const matras = {
-    'aa': 'ा',
-    'i': 'ि',
-    'ii': 'ी',
-    'u': 'ु',
-    'uu': 'ू',
-    'e': 'े',
-    'ai': 'ै',
-    'o': 'ो',
-    'au': 'ौ',
-    'halant': '्',
-    'bindu': 'ं',
-    'cbindu': 'ँ',
-};
-
-export const chars = {
-    'aa': 'आ',
-    'i': 'इ',
-    'ii': 'ई',
-    'u': 'उ',
-    'uu': 'ऊ',
-    'e': 'ए',
-    'ai': 'ऐ',
-    'o': 'ओ',
-    'au': 'औ',
-    'ga': 'ग',
-    'ya': 'य',
-};
-
-export function isConsonant(ch) {
-    const blockSize = 0x80, devStartPoint = 0x0900;
-    const codePoint = ch.codePointAt(0);
-    const blockOffset = codePoint & (blockSize - 1);
-    const blockStartPoint = codePoint & (-blockSize);
-    return blockStartPoint === devStartPoint && ((blockOffset >= 0x15 && blockOffset <= 0x39)
-            || (blockOffset >= 0x58 && blockOffset <= 0x5f));
-}
 
 export const verbInfos = {
     // 'tr': is transitive
@@ -146,20 +113,20 @@ function trnByObject(word, object, useFp=false) {
             object.number = 's';
         }
     }
-    const yaa = chars.ya + matras.aa;
-    const iyaa = matras.i + yaa;
+    const yaa = HI.chars.ya + HI.matras.aa;
+    const iyaa = HI.matras.i + yaa;
     if(object.gender === 'm') {
         if(object.number === 's') {
             return word;
         }
         if(word.endsWith(yaa)) {
-            return word.slice(0, -2) + chars.e;
+            return word.slice(0, -2) + HI.chars.ee;
         }
-        else if(word.endsWith(chars.aa)) {
-            return word.slice(0, -1) + chars.e;
+        else if(word.endsWith(HI.chars.aa)) {
+            return word.slice(0, -1) + HI.chars.ee;
         }
-        else if(word.endsWith(matras.aa)) {
-            return word.slice(0, -1) + matras.e;
+        else if(word.endsWith(HI.matras.aa)) {
+            return word.slice(0, -1) + HI.matras.ee;
         }
         else {
             throw new Error(`word with unsupported ending: ${word}`);
@@ -168,21 +135,21 @@ function trnByObject(word, object, useFp=false) {
     else if(object.gender === 'f') {
         let sing = undefined;
         if(word.endsWith(iyaa)) {
-            sing = word.slice(0, -iyaa.length) + matras.ii;
+            sing = word.slice(0, -iyaa.length) + HI.matras.ii;
         }
         else if(word.endsWith(yaa)) {
-            sing = word.slice(0, -yaa.length) + chars.ii;
+            sing = word.slice(0, -yaa.length) + HI.chars.ii;
         }
-        else if(word.endsWith(chars.aa)) {
-            sing = word.slice(0, -1) + chars.ii;
+        else if(word.endsWith(HI.chars.aa)) {
+            sing = word.slice(0, -1) + HI.chars.ii;
         }
-        else if(word.endsWith(matras.aa)) {
-            sing = word.slice(0, -1) + matras.ii;
+        else if(word.endsWith(HI.matras.aa)) {
+            sing = word.slice(0, -1) + HI.matras.ii;
         }
         else {
             throw new Error(`word with unsupported ending: ${word}`);
         }
-        return (object.number === 's' ? sing : sing + matras.bindu);
+        return (object.number === 's' ? sing : sing + HI.diacritics.bindu);
     }
     else {
         throw new Error(`unrecognized gender ${object.gender}`);
@@ -230,20 +197,20 @@ function beConjSimple(subject, tenseTime, words) {
 }
 
 function getFutureSuffix(subject, beginWithMatra) {
-    const com = beginWithMatra ? matras : chars;
-    const gaaOrGii = chars.ga + (subject.gender === 'm' ? matras.aa : matras.ii);
-    const geOrGii = chars.ga + (subject.gender === 'm' ? matras.e : matras.ii);
+    const com = beginWithMatra ? HI.matras : HI.chars;
+    const gaaOrGii = HI.chars.ga + (subject.gender === 'm' ? HI.matras.aa : HI.matras.ii);
+    const geOrGii = HI.chars.ga + (subject.gender === 'm' ? HI.matras.ee : HI.matras.ii);
     if(subject.type === '1' && subject.number === 's') {
-        return com.uu + matras.cbindu + gaaOrGii;
+        return com.uu + HI.diacritics.cbindu + gaaOrGii;
     }
     else if(subject.type === '1' && subject.number === 'p') {
-        return com.e + matras.cbindu + chars.ga + matras.e;
+        return com.ee + HI.diacritics.cbindu + HI.chars.ga + HI.matras.ee;
     }
     else if(subject.number === 's') {
-        return subject.type === '2' ? com.o + geOrGii : com.e + gaaOrGii;
+        return subject.type === '2' ? com.oo + geOrGii : com.ee + gaaOrGii;
     }
     else {
-        return com.e + matras.cbindu + geOrGii;
+        return com.ee + HI.diacritics.cbindu + geOrGii;
     }
 }
 
@@ -290,10 +257,10 @@ export function verbConj(subject, object, verb, tense, negate) {
         }
         else if(tense.time === 'future') {
             const lastChar = verbInfo.cont[verbInfo.cont.length-1];
-            if(lastChar === matras.e) {
+            if(lastChar === HI.matras.ee) {
                 words.push(verbInfo.cont.slice(0, -1) + getFutureSuffix(subject, true));
             }
-            else if(isConsonant(lastChar)) {
+            else if(HI.getCharCategory(lastChar) === 'c') {
                 words.push(verbInfo.cont + getFutureSuffix(subject, true));
             }
             else {

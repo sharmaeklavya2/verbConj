@@ -1,80 +1,16 @@
 // [ Character manipulation and Sandhi ]=======================================
 
-export const chars = {
-    'a': 'ಅ',
-    'aa': 'ಆ',
-    'i': 'ಇ',
-    'ii': 'ಈ',
-    'u': 'ಉ',
-    'uu': 'ಊ',
-    'e': 'ಎ',
-    'ee': 'ಏ',
-    'ai': 'ಐ',
-    'o': 'ಒ',
-    'oo': 'ಓ',
-    'au': 'ಔ',
+import {Script} from './indianCharUtil.js';
 
-    'ta': 'ತ',
-    'da': 'ದ',
-    'va': 'ವ',
-    'ya': 'ಯ',
-};
+const KN = new Script(0x0C80);
 
-export const matras = {
-    'a': '',
-    'aa': 'ಾ',
-    'i': 'ಿ',
-    'ii': 'ೀ',
-    'u': 'ು',
-    'uu': 'ೂ',
-    'e': 'ೆ',
-    'ee': 'ೇ',
-    'ai': 'ೈ',
-    'o': 'ೊ',
-    'oo': 'ೋ',
-    'au': 'ೌ',
-    'talk': '್',
-}
-
-const charToMatra = {};
-
-function initCharToMatra() {
-    if(!charToMatra.hasOwnProperty('aa')) {
-        for(const [code, char] of Object.entries(chars)) {
-            const matra = matras[code];
-            if(matra !== undefined) {
-                charToMatra[char] = matra;
-            }
-        }
-    }
-}
-
-export const knCatMap = ('-mmm-vvvvvvvv-vv'
-    + 'v-vvvccccccccccc'
-    + 'ccccccccc-cccccc'
-    + 'cccc-ccccc--mmmm'
-    + 'mmmmm-mmm-mmmt--'
-    + '--------------c-'
-    + 'vvmm------------'
-    + '----------------');
-    // v: vowel, c: consonant, m: matra, -: invalid, t: talakatta
-
-export function getCharCategory(ch) {
-    const blockSize = 0x80, knStartPoint = 0x0C80;
-    const codePoint = ch.codePointAt(0);
-    const blockOffset = codePoint & (blockSize - 1);
-    const blockStartPoint = codePoint & (-blockSize);
-    if(blockStartPoint !== knStartPoint) {
-        return '-';
-    }
-    else {
-        return knCatMap[blockOffset];
-    }
-}
+KN.chars.ta = 'ತ';
+KN.chars.da = 'ತ';
+KN.chars.va = 'ವ';
+KN.talk = KN.diacritics.halant;
 
 function phConcatRaw(w1, w2) {
     // phonetic concatenation of words w1 and w2
-    initCharToMatra();
     const l1 = w1.length, l2 = w2.length;
     if(l1 === 0) {
         return w2;
@@ -82,10 +18,9 @@ function phConcatRaw(w1, w2) {
     else if(l2 === 0) {
         return w1;
     }
-    const cat1 = getCharCategory(w1[l1-1]), cat2 = getCharCategory(w2[0]);
+    const cat1 = KN.getCharCategory(w1[l1-1]), cat2 = KN.getCharCategory(w2[0]);
     if(cat1 === 't' && cat2 === 'v') {
-        initCharToMatra();
-        return w1.slice(0, -1) + charToMatra[w2[0]] + w2.slice(1,);
+        return w1.slice(0, -1) + KN.charToMatra[w2[0]] + w2.slice(1,);
     }
     else if('vcm'.includes(cat1) && cat2 === 'c') {
         return w1 + w2;
@@ -247,20 +182,20 @@ function beConjSimple(pronoun, tenseTime, negate) {
 }
 
 function getPresentRoot(verbInfo) {
-    const yu = chars.ya + matras.u;
+    const yu = KN.chars.ya + KN.matras.u;
     const root = verbInfo.root;
-    return (root[root.length - 1] !== matras.u) ? root + yu : root;
+    return (root[root.length - 1] !== KN.matras.u) ? root + yu : root;
 }
 
 function getPrpTrunc(verbInfo) {
     if(verbInfo.prp !== undefined) {
-        return verbInfo.prp + matras.talk;
+        return verbInfo.prp + KN.talk;
     }
     else {
         const root = verbInfo.root;
-        const dat = chars.da + matras.talk;
-        if(root[root.length-1] === matras.u) {
-            return root.slice(0, -1) + matras.i + dat;
+        const dat = KN.chars.da + KN.talk;
+        if(root[root.length-1] === KN.matras.u) {
+            return root.slice(0, -1) + KN.matras.i + dat;
         }
         else {
             return root + dat;
@@ -269,38 +204,38 @@ function getPrpTrunc(verbInfo) {
 }
 
 function getPastAdu(verbInfo) {
-    const itu = matras.i + chars.ta + matras.u;
+    const itu = KN.matras.i + KN.chars.ta + KN.matras.u;
     if(verbInfo.pastAdu !== undefined) {
         return verbInfo.pastAdu;
     }
     else if(verbInfo.prp !== undefined) {
-        return phConcat([verbInfo.prp + matras.talk, itu]);
+        return verbInfo.prp + itu;
     }
     else {
         const root = verbInfo.root;
-        if(root[root.length-1] === matras.u) {
+        if(root[root.length-1] === KN.matras.u) {
             return root.slice(0, -1) + itu;
         }
         else {
-            return root + chars.ya + itu;
+            return root + KN.chars.ya + itu;
         }
     }
 }
 
 function getPvpTrunc(verbInfo) {
     if(verbInfo.pvp !== undefined) {
-        return verbInfo.pvp.slice(0, -1) + matras.talk;
+        return verbInfo.pvp.slice(0, -1) + KN.talk;
     }
     else if(verbInfo.prp !== undefined) {
-        return verbInfo.prp + matras.talk;
+        return verbInfo.prp + KN.talk;
     }
     else {
         const root = verbInfo.root;
-        if(root[root.length-1] === matras.u) {
-            return root.slice(0, -1) + matras.talk;
+        if(root[root.length-1] === KN.matras.u) {
+            return root.slice(0, -1) + KN.talk;
         }
         else {
-            return root + chars.da + matras.talk;
+            return root + KN.chars.da + KN.talk;
         }
     }
 }
@@ -335,14 +270,14 @@ export function verbConj(subject, verb, tense, negate) {
     else if(tense.type === 'simple') {
         const presentRoot = getPresentRoot(verbInfo);
         if(negate) {
-            words.push(phConcat([presentRoot.slice(0, -1) + matras.talk,
+            words.push(phConcat([presentRoot.slice(0, -1) + KN.talk,
                 negSuffix[tense.time]]));
         }
         else if(tense.time === 'present') {
             words.push(phConcat([presentRoot, enToKn.tt, prEnd]));
         }
         else if(tense.time === 'future') {
-            words.push(phConcat([presentRoot, chars.va + matras.talk, fuEnd]));
+            words.push(phConcat([presentRoot, KN.chars.va + KN.talk, fuEnd]));
         }
         else {
             if(pronoun === 'adu') {
@@ -356,7 +291,7 @@ export function verbConj(subject, verb, tense, negate) {
     }
     else if(tense.type === 'continuous') {
         const presentRoot = getPresentRoot(verbInfo);
-        words.push(phConcat([presentRoot, enToKn.tt, chars.aa]));
+        words.push(phConcat([presentRoot, enToKn.tt, KN.chars.aa]));
         words.push(beConjSimple(pronoun, tense.time, negate));
     }
     else if(tense.type === 'perfect') {
