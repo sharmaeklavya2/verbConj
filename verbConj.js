@@ -1,6 +1,7 @@
 import { verbConj as enVerbConj } from "./enVerbConj.js";
 import { verbConj as hiVerbConj } from "./hiVerbConj.js";
 import { verbConj as knVerbConj } from "./knVerbConj.js";
+import { verbConj as teVerbConj } from "./teVerbConj.js";
 import * as f2f from "funcToForm";
 
 function verbConj(subject, object, verb, tense, negate, lang) {
@@ -13,6 +14,9 @@ function verbConj(subject, object, verb, tense, negate, lang) {
     else if(lang === 'kn') {
         return knVerbConj(subject, verb, tense, negate);
     }
+    else if(lang === 'te') {
+        return teVerbConj(subject, verb, tense, negate);
+    }
     else {
         throw new Error(`Unsupported language ${lang}`);
     }
@@ -20,9 +24,14 @@ function verbConj(subject, object, verb, tense, negate, lang) {
 
 //=[ data ]=====================================================================
 
-const langCodeToLangName = {'en': 'English', 'hi': 'Hindi', 'kn': 'Kannada'};
-const tenseTimeCodeToTenseTimeName = {'Pr': 'present', 'Past': 'past', 'Fu': 'future'};
-const tenseTypeCodeToTenseTypeName = {'s': 'simple', 'c': 'continuous', 'p': 'perfect'};
+const langCodeToLangName = {
+    'en': 'English', 'hi': 'Hindi',
+    'kn': 'Kannada', 'te': 'Telugu',
+};
+const tenseTimeCodeToTenseTimeName = {
+    'Pr': 'present', 'Past': 'past', 'Fu': 'future'};
+const tenseTypeCodeToTenseTypeName = {
+    's': 'simple', 'c': 'continuous', 'p': 'perfect'};
 const pronounCodeToDescr = {
     '1sm': 'I (male/neuter)',
     '1sf': 'I (female)',
