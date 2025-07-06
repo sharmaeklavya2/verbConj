@@ -57,8 +57,8 @@ const tenseCodeToDescr = {
 };
 const verbs = [
     'be', 'ask', 'bring', 'call', 'come', 'do', 'drink', 'eat',
-    'give', 'go', 'hear', 'keep', 'laugh', 'learn', 'see', 'sleep', 'take',
-    'tell', 'walk', 'write',
+    'give', 'go', 'hear', 'jump', 'keep', 'laugh', 'learn', 'run',
+    'see', 'sing', 'sit', 'sleep', 'take', 'talk', 'tell', 'walk', 'write',
 ];
 const verbCodeToDescr = {
 //  'putOn': 'put (on)',
