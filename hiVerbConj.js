@@ -72,7 +72,7 @@ export const verbInfos = {
     'be': {'tr': false, 'cont': 'हो', 'past': 'हुआ'},
     'have': null,
     'ask': {'tr': true, 'cont': 'पूछ', 'past': 'पूछा'},
-    'bring': {'tr': true, 'cont': 'ला', 'past': 'लाया'},
+    'bring': {'tr': false, 'cont': 'ला', 'past': 'लाया'},
     'call': {'tr': true, 'cont': 'बुला', 'past': 'बुलाया'},
     'come': {'tr': false, 'cont': 'आ', 'past': 'आया'},
     'do': {'tr': true, 'cont': 'कर', 'past': 'किया'},
