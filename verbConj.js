@@ -83,6 +83,17 @@ function getOptions(codeToDescr) {
     return options;
 }
 
+function randomShuffle(a) {
+    let n = a.length;
+    while(n > 1) {
+        const i = Math.floor(Math.random() * n);
+        --n;
+        const x = a[i];
+        a[i] = a[n];
+        a[n] = x;
+    }
+}
+
 export function getParamGroup() {
     const pronounOptions = getOptions(pronounCodeToDescr);
     pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
@@ -99,6 +110,7 @@ export function getParamGroup() {
     const tenseParam = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
 
     const negateParam = new f2f.Param('negate', new f2f.CheckBoxWidget());
+    const shuffleParam = new f2f.Param('shuffle', new f2f.CheckBoxWidget(), {'label': 'shuffle randomly'});
 
     const langParams = [];
     for(const [langCode, langName] of Object.entries(langCodeToLangName)) {
@@ -107,7 +119,7 @@ export function getParamGroup() {
     const langsParamGroup = new f2f.ParamGroup('langs', langParams, {label: 'languages', compact: true});
 
     const paramGroup = new f2f.ParamGroup(undefined, [subjectParam, objectParam, verbParam,
-        tenseParam, negateParam, langsParamGroup]);
+        tenseParam, negateParam, langsParamGroup, shuffleParam]);
     return paramGroup;
 }
 
@@ -143,6 +155,9 @@ export function printTable(input, stdout) {
     stdout.tableRow(langNames, true);
 
     const inputRows = cartProd([input.subject, input.object, input.verb, input.tense]);
+    if(input.shuffle) {
+        randomShuffle(inputRows);
+    }
     for(const [subject, object, verb, tense] of inputRows) {
         const subjectInfo = {'type': subject[0], 'number': subject[1], 'gender': subject[2]};
         const objectInfo = {'number': object[0], 'gender': object[1]};
