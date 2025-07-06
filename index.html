@@ -11,8 +11,10 @@
     "funcToForm": "https://sharmaeklavya2.github.io/funcToForm/v2.js"
 }}
 </script>
+
 <link rel="stylesheet" href="https://sharmaeklavya2.github.io/funcToForm/funcToForm.css" />
 <link rel="stylesheet" href="https://sharmaeklavya2.github.io/trin/trin.css" />
+<link rel="stylesheet" href="verbConj.css" />
 
 <link rel="modulepreload" href="https://sharmaeklavya2.github.io/trin/trin.js" />
 <link rel="modulepreload" href="https://sharmaeklavya2.github.io/funcToForm/v2.js" />
@@ -24,10 +26,10 @@
 <script type="module" src="https://sharmaeklavya2.github.io/trin/trinUI.js?init=true"></script>
 <script type="module">
 import * as f2f from "funcToForm";
-import {getParamGroup, printSentences} from "./verbConj.js";
+import {getParamGroup, printTable} from "./verbConj.js";
 
 window.addEventListener('DOMContentLoaded', function() {
-    f2f.createForm('myApp', getParamGroup(), printSentences);
+    f2f.createForm('myApp', getParamGroup(), printTable);
 });
 </script>
 </head>

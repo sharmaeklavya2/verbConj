@@ -132,7 +132,7 @@ function cartProd(arrList) {
     return output;
 }
 
-export function printSentences(input, stdout) {
+export function printTable(input, stdout) {
     const langCodes = [], langNames = [];
     for(const [langCode, selected] of Object.entries(input.langs)) {
         if(selected) {
@@ -153,13 +153,33 @@ export function printSentences(input, stdout) {
         const outputRow = [];
         for(const lang of langCodes) {
             const response = verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
-            if(response.status === 'ok' || response.status === 'warn') {
-                outputRow.push(response.text);
-            }
-            else {
-                outputRow.push(response.status + ': ' + response.msg);
-            }
+            outputRow.push(response);
         }
-        stdout.tableRow(outputRow);
+        printRow(stdout, outputRow);
     }
+}
+
+const statusToCssClass = {
+    'warn': 'warning',
+    'unsupp': 'warning',
+    'error': 'danger',
+    'unimpl': 'danger',
+}
+
+function printRow(stdout, row) {
+    // print a table row from array of response objects
+    const tr = document.createElement('tr');
+    for(const response of row) {
+        const td = document.createElement('td');
+        td.innerText = response.text || response.status;
+        if(response.status !== 'ok') {
+            const statusClass = statusToCssClass[response.status] ?? 'danger';
+            td.classList.add(statusClass);
+        }
+        if(response.msg) {
+            td.dataset.msg = response.status + ': ' + response.msg;
+        }
+        tr.appendChild(td);
+    }
+    stdout.tableRow(tr);
 }
