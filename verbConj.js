@@ -79,6 +79,7 @@ for(const verb of verbs) {
     }
 }
 const knPronouns = ['1sm', '1pm', '2sm', '2pm', '3sm', '3sf', '3pm', '3sn', '3pn'];
+const teReviewPronouns = ['1sm', '1pm', '3sf', '3pn'];
 const teTenses = ['sPast', 'sFu', 'cPr'];
 
 //=[ form creation ]============================================================
@@ -108,6 +109,7 @@ export function getParamGroup() {
     const pronounOptions = getOptions(pronounCodeToDescr);
     pronounOptions.push(new f2f.SelectOption({name: 'kn', value: knPronouns, text: '(kn)'}));
     pronounOptions.push(new f2f.SelectOption({name: 'en', value: ['1sm', '2sm', '3sm', '3pm'], text: '(en)'}));
+    pronounOptions.push(new f2f.SelectOption({name: 'teReview', value: teReviewPronouns, text: '(teReview)'}));
     const subjectParam = new f2f.Param('subject', new f2f.SelectWidget(pronounOptions, '1sm'));
 
     const objectOptions = getOptions(objectCodeToDescr);
