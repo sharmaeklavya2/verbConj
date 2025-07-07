@@ -218,8 +218,8 @@ export function verbConj(subject, object, verb, tense, negate) {
     const response = {'status': 'ok', 'text': undefined, 'msg': undefined};
     if(subject.gender === 'n') {
         subject = {'type': subject.type, 'number': subject.number, 'gender': 'm'};
-        response.status = 'warn';
-        response.msg = "subject.gender changed from n to m.";
+        // response.status = 'warn';
+        // response.msg = "subject.gender changed from n to m.";
     }
     object = Object.assign({}, object);
     object.type = '3';

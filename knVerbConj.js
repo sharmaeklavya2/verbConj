@@ -300,8 +300,8 @@ export function verbConj(subject, verb, tense, negate) {
         words.push(phConcat([pvpTrunc, beConj]));
     }
     else {
-        response.status = 'unimpl';
-        response.msg = `tense type '${tense.type}' is unimplemented.`;
+        response.status = 'error';
+        response.msg = `unrecognized tense type '${tense.type}'.`;
         return response;
     }
     response.text = wordsToSentence(words);
