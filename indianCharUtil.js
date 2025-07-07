@@ -79,10 +79,12 @@ export class Script {
         this.matras.a = '';
         this.diacritics = Object.fromEntries(Object.entries(devDiacritics).map(trnFromDev));
         this.charToMatra = {};
+        this.matraToChar = {};
         for(const [name, ch] of Object.entries(this.chars)) {
             const matra = this.matras[name];
             if(matra !== undefined) {
                 this.charToMatra[ch] = matra;
+                this.matraToChar[matra] = ch;
             }
         }
     }
