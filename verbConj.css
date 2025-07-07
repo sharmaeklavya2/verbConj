@@ -3,6 +3,7 @@ body {--hov-bg-color: #c0c0c0;}
     body {--hov-bg-color: #303030;}
 }
 
+td, th {padding: 0.3em 0.5em;}
 td.danger {color: var(--text-danger); background-color: var(--danger-tint);}
 td.warning {color: var(--text-warning); background-color: var(--warning-tint);}
 
