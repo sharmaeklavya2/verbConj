@@ -79,6 +79,7 @@ for(const verb of verbs) {
     }
 }
 const knPronouns = ['1sm', '1pm', '2sm', '2pm', '3sm', '3sf', '3pm', '3sn', '3pn'];
+const teTenses = ['sPast', 'sFu', 'cPr'];
 
 //=[ form creation ]============================================================
 
@@ -116,6 +117,7 @@ export function getParamGroup() {
     const verbParam = new f2f.Param('verb', new f2f.SelectWidget(verbOptions, 'see'));
 
     const tenseOptions = getOptions(tenseCodeToDescr);
+    tenseOptions.push(new f2f.SelectOption({name: 'te', value: teTenses, text: '(te)'}));
     const tenseParam = new f2f.Param('tense', new f2f.SelectWidget(tenseOptions, 'sPr'));
 
     const negateParam = new f2f.Param('negate', new f2f.CheckBoxWidget());
