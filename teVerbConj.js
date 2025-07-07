@@ -86,14 +86,15 @@ export const verbInfos = {
         'imp': 'ఉండు',
         'prv': 'ఉంటూ',
         'par': 'ఉన్న',
-        'ger': 'ఉండటం',
     },
     'have': null,
     'ask': {
         'imp': 'అడుగు',
+        'prv': 'అడుగుతూ',
         'par': 'అడిగ',
         'pastAdi': 'అడిగింది',
         'inf': 'అడగ',
+        'ger': 'అడగటం'
     },
     'bring': {
         'imp': 'తీసుకురా',
@@ -105,6 +106,10 @@ export const verbInfos = {
     },
     'call': {
         'imp': 'పిలిచు',
+        'prv': 'పిలుస్తూ',
+        'par': 'పిలిచా',
+        'pastAdi': 'పిలిచింది',
+        'pastWarn': true,
     },
     'come': {
         'imp': 'రా',
@@ -123,16 +128,23 @@ export const verbInfos = {
     },
     'drink': {
         'imp': 'తాగు',
+        'prv': 'తాగుతూ',
+        'par': 'తాగా',
+        'pastAdi': 'తాగింది',
+        'pastWarn': true,
     },
     'eat': {
         'imp': 'తిను',
         'prv': 'తింటూ',
         'par': 'తిన్నా',
         'pastAdi': 'తిన్నది',
-        'ger': 'తినటం',
     },
     'give': {
         'imp': 'ఇవ్వు',
+        'prv': 'ఇస్తూ',
+        'par': 'ఇచ్చా',
+        'pastAdi': 'ఇచ్చింది',
+        'pastWarn': true,
     },
     'go': {
         'imp': 'వెళ్ళు',
@@ -140,7 +152,6 @@ export const verbInfos = {
         'par': 'వెళ్ళా',
         'pastAdi': 'వెళ్లింది',
         'pastWarn': true,
-        'ger': 'పోవటం',
     },
     'hear': {
         'imp': 'విను',
@@ -155,20 +166,39 @@ export const verbInfos = {
     'keep': undefined,
     'laugh': {
         'imp': 'నవ్వు',
+        'prv': 'నవ్వుతూ',
+        'par': 'నవ్వా',
+        'pastAdi': 'నవ్వింది',
+        'pastWarn': true,
     },
-    'learn': undefined,
+    'learn': {
+        'imp': 'నేర్చుకో',
+        'prv': 'నేర్చుకుంటూ',
+        'par': 'నేర్చుకున్నా',
+        'pastAdi': 'నేర్చుకుంది',
+    },
+    'putIn': {
+        'imp': 'పెట్టు',
+        'prv': 'పెడ్తూ',
+        'par': 'పెట్టా',
+        'pastAdi': 'పెట్టింది',
+        'pastWarn': true,
+    },
     'read': {
         'imp': 'చదువు',
         'prv': 'చదువుతూ',
         'par': 'చదివా',
         'pastAdi': 'చదివింది',
         'pastWarn': true,
-        'ger': 'చదవటం',
         'inf': 'చదవ',
+        'ger': 'చదవటం',
     },
     'run': {
         'imp': 'పరిగెత్తు',
         'prv': 'పరిగెత్తూ',
+        'par': 'పరిగెత్తా',
+        'pastAdi': 'పరిగెత్తింది',
+        'pastWarn': true,
     },
     'see': {
         'imp': 'చూడు',
@@ -179,6 +209,7 @@ export const verbInfos = {
     },
     'sing': {
         'imp': 'పాడు',
+        'prv': 'పాడుతూ',
         'par': 'పాడ',
         'pastAdi': 'పాడింది',
         'pastWarn': true,
@@ -191,6 +222,11 @@ export const verbInfos = {
     },
     'sleep': {
         'imp': 'నిద్రపో',
+        'prv': 'నిద్రపోతూ',
+        'par': undefined,
+        'pastAdi': 'నిద్రపోయింది',
+        'pastWarn': true,
+        'ger': 'నిద్రపోవటం',
     },
     'take': {
         'imp': 'తీసుకో',
@@ -200,7 +236,10 @@ export const verbInfos = {
     },
     'talk': {
         'imp': 'మాట్లాడు',
-        'ger': 'మాట్లాడటం',
+        'prv': 'మాట్లాడుతూ',
+        'par': 'మాట్లాడా',
+        'pastAdi': 'మాట్లాడింది',
+        'pastWarn': true,
     },
     'tell': {
         'imp': 'చెప్పు',
@@ -216,7 +255,6 @@ export const verbInfos = {
         'par': 'రాశా',
         'pastAdi': 'రాసింది',
         'pastWarn': true,
-        'ger': 'రాయటం',
     },
 };
 
@@ -288,6 +326,21 @@ function getInf(verbInfo) {
     }
 }
 
+function getGer(verbInfo) {
+    const ger = verbInfo.ger;
+    if(ger !== undefined) {
+        return ger;
+    }
+    const imp = getVIF(verbInfo, 'imp');
+    const endVowel = TE.matraToChar[imp[imp.length - 1]];
+    if(longVowels.includes(endVowel)) {
+        return imp + 'టం';
+    }
+    else {
+        return sandhi(imp, 'అటం');
+    }
+}
+
 export function verbConj(subject, verb, tense, negate) {
     const response = {'status': 'ok', 'text': undefined, 'msg': undefined};
     const words = [];
@@ -344,7 +397,7 @@ export function verbConj(subject, verb, tense, negate) {
                         return response;
                     }
                     else {
-                        words.push(getVIF(verbInfo, 'ger'));
+                        words.push(getGer(verbInfo));
                         words.push('లేదు');
                     }
                 }
