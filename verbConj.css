@@ -1,6 +1,12 @@
-body {--hov-bg-color: #c0c0c0;}
+body {
+    --hov-bg-color: #c0c0c0;
+    --tint: rgba(0,0,0,0.08);
+}
 @media (prefers-color-scheme: dark) {
-    body {--hov-bg-color: #303030;}
+    body {
+        --hov-bg-color: #303030;
+        --tint: rgba(255,255,255,0.08);
+    }
 }
 
 td, th {padding: 0.3em 0.5em;}
@@ -10,14 +16,25 @@ td.warning {color: var(--text-warning); background-color: var(--warning-tint);}
 td[data-msg] {
     position: relative;
 }
+td[data-msg]:hover, td[data-msg]:focus {
+    position: relative;
+    outline: 1px solid var(--text-color);
+}
+td[data-msg]:hover::before, td[data-msg]:focus::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--tint);
+    z-index: 50;
+}
 td[data-msg]:hover::after, td[data-msg]:focus::after {
     visibility: visible;
 }
 td[data-msg]::after {
     visibility: hidden;
     position: absolute;
-    top: 1.1em;
     left: 0.5em;
+    top: -1.2em;
     z-index: 100;
     content: attr(data-msg);
 
@@ -27,4 +44,5 @@ td[data-msg]::after {
     border-radius: 0.2em;
     padding: 0.2em 0.3em;
     white-space: nowrap;
+    box-shadow: 0 0 4px black, 0 0 20px black;
 }

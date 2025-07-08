@@ -165,7 +165,7 @@ export function printTable(input, stdout) {
             langNames.push(langCodeToLangName[langCode]);
         }
     }
-    stdout.tableRow(langNames, true);
+    stdout.tableRow(['Subj'].concat(langNames), true);
 
     const inputRows = cartProd([input.subject, input.object, input.verb, input.tense]);
     if(input.shuffle) {
@@ -183,7 +183,7 @@ export function printTable(input, stdout) {
             const response = verbConj(subjectInfo, objectInfo, verb, tenseInfo, input.negate, lang);
             outputRow.push(response);
         }
-        printRow(stdout, outputRow);
+        printRow(stdout, outputRow, subject);
     }
 }
 
@@ -194,9 +194,14 @@ const statusToCssClass = {
     'unimpl': 'danger',
 }
 
-function printRow(stdout, row) {
+function printRow(stdout, row, subject) {
     // print a table row from array of response objects
     const tr = document.createElement('tr');
+    const td1 = document.createElement('td');
+    td1.innerText = subject;
+    td1.style.width = '1%';
+    td1.dataset.msg = pronounCodeToDescr[subject];
+    tr.appendChild(td1);
     for(const response of row) {
         const td = document.createElement('td');
         td.innerText = response.text || response.status;
