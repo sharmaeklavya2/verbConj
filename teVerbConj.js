@@ -86,6 +86,7 @@ export const verbInfos = {
         'imp': 'ఉండు',
         'prv': 'ఉంటూ',
         'par': 'ఉన్న',
+        'pastAdi': 'ఉంది',
     },
     'have': null,
     'ask': {
@@ -163,7 +164,6 @@ export const verbInfos = {
         'imp': 'దూకు',
         'prv': 'దూకుతూ',
     },
-    'keep': undefined,
     'laugh': {
         'imp': 'నవ్వు',
         'prv': 'నవ్వుతూ',
@@ -257,6 +257,8 @@ export const verbInfos = {
         'pastWarn': true,
     },
 };
+
+verbInfos['keep'] = verbInfos['putIn'];
 
 // [ Conjugation Logic ]=======================================================
 
@@ -384,7 +386,9 @@ export function verbConj(subject, verb, tense, negate) {
                     }
                 }
                 else {
-                    const suffix = (pronoun === 'adi') ? 'ఉంది' : affEnd;
+                    // const suffix = (pronoun === 'adi') ? 'ఉంది' : affEnd;
+                    // textbook says it should be 'ఉంది' but my wife disagrees.
+                    const suffix = affEnd;
                     const prv = getVIF(verbInfo, 'prv');
                     words.push(sandhi(prv, suffix));
                 }
