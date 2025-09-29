@@ -248,7 +248,15 @@ export const verbInfos = {
         'pastAdi': 'చెప్పింది',
         'pastWarn': true,
     },
-    'walk': undefined,
+    'walk': {
+        'imp': 'నడువు',
+        'inf': 'నడవ',
+        'ger': 'నడవటం',
+        'prv': 'నడుస్తూ',
+        'par': 'నడిచ',
+        'pastAdi': 'నడిచింది',
+        'pastWarn': true,
+    },
     'write': {
         'imp': 'రాయి',
         'prv': 'రాస్తూ',
